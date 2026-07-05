@@ -3,7 +3,10 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "Metering.h"
 
-/** Vertical peak meter, polls MeterState on a timer with visual decay. */
+namespace aur::ui
+{
+/** Vertical peak meter. Polls a MeterState on a timer with visual decay.
+    `input` meters use the precision (teal) colour, `output` the accent (heat). */
 class MeterComponent : public juce::Component,
                        private juce::Timer
 {
@@ -23,3 +26,4 @@ private:
     juce::String labelText;
     float displayValue = 0.0f;
 };
+}

@@ -2,11 +2,11 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginProcessor.h"
-#include "UI/MoltenLookAndFeel.h"
-#include "UI/Knob.h"
-#include "UI/MeterComponent.h"
+#include "AurLookAndFeel.h"
+#include "Knob.h"
+#include "MeterComponent.h"
 
-/** AUR EMBER editor — MOLTEN design language. UI only, binds via APVTS. */
+/** AUR EMBER editor — uses the shared AurvedaUI design system. UI only. */
 class EmberEditor : public juce::AudioProcessorEditor
 {
 public:
@@ -20,9 +20,9 @@ private:
     void refreshPresetBox();
 
     EmberProcessor& audioProcessor;
-    MoltenLookAndFeel lnf;
+    aur::ui::AurLookAndFeel lnf;
 
-    std::unique_ptr<LabeledKnob> driveKnob, inputKnob, mixKnob, toneKnob, outputKnob;
+    std::unique_ptr<aur::ui::LabeledKnob> driveKnob, inputKnob, mixKnob, toneKnob, outputKnob;
 
     juce::ComboBox flavorBox, presetBox;
     juce::TextButton bypassButton { "BYPASS" };
@@ -30,8 +30,8 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> flavorAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   bypassAttachment;
 
-    MeterComponent inMeter  { audioProcessor.getMeterState(), MeterComponent::Which::input,  "IN" };
-    MeterComponent outMeter { audioProcessor.getMeterState(), MeterComponent::Which::output, "OUT" };
+    aur::ui::MeterComponent inMeter  { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::input,  "IN" };
+    aur::ui::MeterComponent outMeter { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::output, "OUT" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EmberEditor)
 };

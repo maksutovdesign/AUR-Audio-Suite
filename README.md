@@ -19,15 +19,23 @@ near-black, with cool teal reserved for precision readouts (LUFS, true-peak).
 
 ```
 AUR/
-  AurvedaDSP/          # shared, header-only sound engine (reused by every module)
+  AurvedaDSP/          # shared SOUND engine (header-only) — reused by every module
     ADAASaturator.h    #   1st-order antiderivative anti-aliased saturator
     GainStage.h  ToneTilt.h  Metering.h
+  AurvedaUI/           # shared DESIGN SYSTEM — reused by every module
+    Theme.h            #   ← single source of truth: colours, metrics, fonts
+    AurLookAndFeel.*   #   suite look-and-feel (reads Theme)
+    Knob.h  MeterComponent.*  Branding.h
   EMBER/               # module 1 — ADAA saturator (Tube / Tape / Iron)
     Source/  Presets/  CMakeLists.txt
 ```
 
-The shared `AurvedaDSP` engine is what makes the whole line sound like one
-family — every module draws its character from the same code.
+Two shared foundations make the whole line feel like one product:
+- **`AurvedaDSP`** — every module draws its *sound* from the same engine.
+- **`AurvedaUI`** — every module draws its *look* from the same design system.
+  Edit [`AurvedaUI/Theme.h`](AurvedaUI/Theme.h) (or call `aur::ui::setTheme(...)`)
+  and the entire suite restyles at once. Alternative directions
+  `obsidianTheme()` / `fluxTheme()` ship ready to switch to.
 
 ## Modules (roadmap)
 

@@ -34,8 +34,8 @@ target_sources(EMBER PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp
     Source/Presets.cpp
-    Source/UI/MoltenLookAndFeel.cpp
-    Source/UI/MeterComponent.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaUI/AurLookAndFeel.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaUI/MeterComponent.cpp)
 
 target_compile_definitions(EMBER PUBLIC
     JUCE_WEB_BROWSER=0
@@ -43,10 +43,11 @@ target_compile_definitions(EMBER PUBLIC
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_DISPLAY_SPLASH_SCREEN=0)
 
-# Shared AUR sound engine (header-only).
+# Shared AUR engine + design system.
 target_include_directories(EMBER PRIVATE
     Source
-    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaDSP)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaDSP
+    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaUI)
 
 target_link_libraries(EMBER PRIVATE
     juce::juce_audio_utils

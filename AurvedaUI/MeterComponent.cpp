@@ -1,7 +1,9 @@
 #include "MeterComponent.h"
-#include "MoltenLookAndFeel.h"
+#include "Theme.h"
 #include <juce_audio_basics/juce_audio_basics.h>
 
+namespace aur::ui
+{
 MeterComponent::MeterComponent (aur::MeterState& state, Which w, juce::String label)
     : meterState (state), which (w), labelText (std::move (label))
 {
@@ -24,22 +26,24 @@ void MeterComponent::timerCallback()
 
 void MeterComponent::paint (juce::Graphics& g)
 {
+    const auto& t = theme();
     auto bounds = getLocalBounds();
     auto labelArea = bounds.removeFromBottom (15);
 
-    g.setColour (MoltenLookAndFeel::inkDim);
-    g.setFont (juce::FontOptions (10.0f, juce::Font::bold));
+    g.setColour (t.inkDim);
+    g.setFont (monoFont (t.fsCaption, true));
     g.drawText (labelText, labelArea, juce::Justification::centred);
 
     auto barArea = bounds.reduced (2).toFloat();
-    g.setColour (MoltenLookAndFeel::line);
+    g.setColour (t.line);
     g.fillRoundedRectangle (barArea, 3.0f);
 
     const auto fillH = barArea.getHeight() * displayValue;
     auto fill = barArea.withTop (barArea.getBottom() - fillH);
 
-    const auto colour = displayValue > 0.92f ? juce::Colour (0xffff5c4d)
-                        : (which == Which::input ? MoltenLookAndFeel::law : MoltenLookAndFeel::heat);
+    const auto colour = displayValue > 0.92f ? t.warning
+                        : (which == Which::input ? t.precision : t.accent);
     g.setColour (colour);
     g.fillRoundedRectangle (fill, 3.0f);
+}
 }
