@@ -1,0 +1,555 @@
+<title>AUR · FORGE — концепт интерфейса</title>
+<h2 class="sr-only">Дизайн-концепт флагманского аудио-плагина AUR FORGE: тёмный тёплый интерфейс с живым анализатором спектра, центральной ручкой CHARACTER, цепочкой обработки и метрами громкости LUFS/True Peak.</h2>
+
+<style>
+  :root{
+    /* ——— HEAT ramp (аналоговый характер) ——— */
+    --heat-1:#FFC98A;   /* highlight  */
+    --heat-2:#FF8A3D;   /* molten copper — главный акцент */
+    --heat-3:#E85F2C;   /* forge red  */
+    --heat-4:#8A2F1C;   /* deep ember */
+    /* ——— LAW ramp (точность / метрология) ——— */
+    --law-1:#7FE6D6;
+    --law-2:#37B9A8;
+    /* ——— warm neutrals (не серые — с красно-коричневым уклоном) ——— */
+    --ground:#141210;
+    --panel:#1C1815;
+    --panel-2:#231E1A;
+    --line:#332A24;
+    --line-2:#443830;
+    --ink:#F3ECE2;
+    --ink-mute:#A6988A;
+    --ink-dim:#6F6357;
+    /* semantic */
+    --ok:#8FCB6E;
+    --warn:#FF5C4D;
+
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+  .stage{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(255,138,61,.14), transparent 55%),
+      var(--ground);
+    min-height:100%;
+    padding:32px 20px 56px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:34px;
+  }
+
+  /* ============ PLUGIN WINDOW ============ */
+  .plugin{
+    width:min(980px,100%);
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 30px 80px -30px rgba(0,0,0,.8), 0 0 0 1px rgba(255,138,61,.04);
+  }
+
+  /* ---- top bar ---- */
+  .bar{
+    display:flex;align-items:center;gap:18px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(255,138,61,.05), transparent);
+  }
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand .logo{flex:0 0 auto}
+  .brand .names{display:flex;flex-direction:column;line-height:1;min-width:0}
+  .brand .suite{font:600 11px/1 var(--mono);letter-spacing:.32em;color:var(--heat-2)}
+  .brand .module{font-weight:800;font-size:19px;letter-spacing:-.01em;margin-top:5px}
+  .tag{font-size:11px;color:var(--ink-dim);letter-spacing:.02em}
+
+  .bar-spacer{flex:1 1 auto}
+
+  .assistant{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 14px;border-radius:999px;
+    border:1px solid var(--line-2);
+    background:linear-gradient(180deg, rgba(255,138,61,.16), rgba(255,138,61,.04));
+    color:var(--heat-1);font-weight:600;font-size:12.5px;cursor:pointer;
+    transition:border-color .18s, transform .18s;
+  }
+  .assistant:hover{border-color:var(--heat-2);transform:translateY(-1px)}
+  .assistant .dot{width:7px;height:7px;border-radius:50%;background:var(--heat-2);box-shadow:0 0 10px var(--heat-2)}
+
+  .preset{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 12px;border-radius:9px;
+    border:1px solid var(--line-2);background:var(--ground);
+    font:500 12.5px var(--sans);color:var(--ink);cursor:pointer;min-width:172px;
+  }
+  .preset .lbl{color:var(--ink-dim);font:600 10px var(--mono);letter-spacing:.16em}
+  .preset .val{margin-left:auto;color:var(--ink)}
+  .preset .chev{color:var(--ink-mute)}
+
+  /* ---- hero analyzer ---- */
+  .hero{position:relative;height:190px;border-bottom:1px solid var(--line);background:var(--ground)}
+  .hero canvas{display:block;width:100%;height:100%}
+  .hero .readout{
+    position:absolute;left:16px;top:12px;display:flex;gap:22px;
+    font:600 10px var(--mono);letter-spacing:.14em;color:var(--ink-dim);pointer-events:none
+  }
+  .hero .readout b{color:var(--law-1);font-weight:700}
+  .hero .scale{
+    position:absolute;right:14px;bottom:10px;display:flex;gap:16px;
+    font:600 9.5px var(--mono);letter-spacing:.12em;color:var(--ink-dim);pointer-events:none
+  }
+
+  /* ---- body: chain + character + meters ---- */
+  .body{display:grid;grid-template-columns:1fr 236px;gap:0}
+  .chain{
+    padding:20px 18px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px;
+    border-right:1px solid var(--line);
+    align-content:start;
+  }
+  .module-card{
+    background:var(--ground);border:1px solid var(--line);border-radius:12px;
+    padding:13px 12px 11px;display:flex;flex-direction:column;gap:12px;
+  }
+  .module-card .mc-head{display:flex;align-items:center;justify-content:space-between}
+  .module-card .mc-name{font:700 10.5px var(--mono);letter-spacing:.18em;color:var(--ink-mute)}
+  .module-card .mc-sw{
+    width:30px;height:16px;border-radius:999px;border:1px solid var(--line-2);
+    background:var(--panel);position:relative;cursor:pointer;flex:0 0 auto
+  }
+  .module-card .mc-sw::after{content:"";position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:var(--ink-dim);transition:.2s}
+  .module-card.on .mc-sw{border-color:var(--heat-3);background:rgba(255,138,61,.18)}
+  .module-card.on .mc-sw::after{left:16px;background:var(--heat-2);box-shadow:0 0 8px var(--heat-2)}
+  .module-card.off{opacity:.5}
+  .knob-row{display:flex;justify-content:space-around;gap:6px}
+
+  /* ---- knob ---- */
+  .knob{display:flex;flex-direction:column;align-items:center;gap:6px;user-select:none}
+  .knob .dial{position:relative;cursor:ns-resize;touch-action:none}
+  .knob .kv{font:600 11px var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
+  .knob .kl{font:600 9px var(--mono);letter-spacing:.1em;color:var(--ink-dim);text-transform:uppercase}
+
+  /* ---- centerpiece: CHARACTER ---- */
+  .character{
+    grid-column:1 / -1;
+    display:flex;align-items:center;gap:22px;
+    background:linear-gradient(120deg, rgba(255,138,61,.10), rgba(232,95,44,.04));
+    border:1px solid var(--line-2);border-radius:14px;padding:16px 20px;
+  }
+  .character .big-dial{cursor:ns-resize;touch-action:none;flex:0 0 auto}
+  .character .cx{display:flex;flex-direction:column;gap:6px}
+  .character .cx .t{font:800 15px var(--sans);letter-spacing:.02em}
+  .character .cx .s{font-size:12px;color:var(--ink-mute);max-width:34ch;line-height:1.45}
+  .character .cx .layers{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+  .character .chip{
+    font:600 9.5px var(--mono);letter-spacing:.1em;padding:4px 9px;border-radius:999px;
+    border:1px solid var(--line-2);color:var(--ink-mute)
+  }
+  .character .chip.heat{color:var(--heat-1);border-color:rgba(255,138,61,.4)}
+  .character .chip.law{color:var(--law-1);border-color:rgba(55,185,168,.4)}
+
+  /* ---- meters rail ---- */
+  .meters{padding:18px 16px;display:flex;flex-direction:column;gap:16px}
+  .meter-block .mtitle{font:600 9.5px var(--mono);letter-spacing:.16em;color:var(--ink-dim);margin-bottom:8px}
+  .bars{display:flex;gap:9px;align-items:flex-end;height:96px}
+  .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%}
+  .bar-track{position:relative;width:14px;flex:1;background:var(--ground);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+  .bar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:0 0 4px 4px;transition:height .09s linear}
+  .bar-cap{font:600 9px var(--mono);color:var(--ink-dim)}
+  .lufs{display:flex;flex-direction:column;gap:9px;border-top:1px solid var(--line);padding-top:14px}
+  .lufs .row{display:flex;align-items:baseline;justify-content:space-between}
+  .lufs .k{font:600 10px var(--mono);letter-spacing:.12em;color:var(--ink-dim)}
+  .lufs .v{font:700 16px var(--mono);color:var(--law-1);font-variant-numeric:tabular-nums}
+  .lufs .v.tp{color:var(--heat-1)}
+  .lufs .u{font:600 9px var(--mono);color:var(--ink-dim);margin-left:3px}
+
+  /* ============ IDENTITY STRIP ============ */
+  .identity{width:min(980px,100%);display:flex;flex-direction:column;gap:22px}
+  .id-head{display:flex;flex-direction:column;gap:8px}
+  .id-eyebrow{font:700 10px var(--mono);letter-spacing:.3em;color:var(--heat-2)}
+  .id-title{font-weight:800;font-size:23px;letter-spacing:-.01em;text-wrap:balance;margin:0}
+  .id-sub{color:var(--ink-mute);font-size:13.5px;line-height:1.5;max-width:62ch}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 16px 15px;display:flex;flex-direction:column;gap:9px}
+  .card h4{margin:0;font:700 11px var(--mono);letter-spacing:.14em;color:var(--ink)}
+  .card p{margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-mute)}
+  .card .badge{align-self:flex-start;font:600 9px var(--mono);letter-spacing:.12em;padding:3px 8px;border-radius:6px}
+  .badge.heat{background:rgba(255,138,61,.14);color:var(--heat-1)}
+  .badge.law{background:rgba(55,185,168,.14);color:var(--law-1)}
+
+  .palette{display:flex;flex-wrap:wrap;gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .sw{height:56px;flex:1 1 90px;display:flex;align-items:flex-end;padding:7px 8px;font:600 8.5px var(--mono);letter-spacing:.04em}
+
+  .taxo{display:flex;flex-wrap:wrap;gap:8px}
+  .taxo .t{
+    display:flex;align-items:center;gap:8px;font:600 11px var(--mono);letter-spacing:.06em;
+    padding:8px 13px;border-radius:9px;border:1px solid var(--line-2);background:var(--panel);color:var(--ink)
+  }
+  .taxo .t .n{font-size:9px;color:var(--ink-dim)}
+  .taxo .t .d{width:6px;height:6px;border-radius:50%}
+
+  .footnote{font-size:11px;color:var(--ink-dim);line-height:1.5}
+
+  @media (max-width:760px){
+    .body{grid-template-columns:1fr}
+    .chain{border-right:none;border-bottom:1px solid var(--line)}
+    .meters{flex-direction:row;flex-wrap:wrap}
+    .grid3{grid-template-columns:1fr}
+    .character{flex-direction:column;align-items:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+
+<div class="stage">
+
+  <!-- ===================== PLUGIN WINDOW ===================== -->
+  <div class="plugin" role="img" aria-label="Мокап интерфейса плагина AUR FORGE">
+    <div class="bar">
+      <div class="brand">
+        <svg class="logo" width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+          <circle cx="17" cy="17" r="15.5" fill="none" stroke="#332A24" stroke-width="1"/>
+          <path d="M17 3 a14 14 0 0 1 0 28" fill="none" stroke="#FF8A3D" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="17" cy="17" r="5.4" fill="none" stroke="#FFC98A" stroke-width="2"/>
+          <circle cx="17" cy="17" r="1.6" fill="#FF8A3D"/>
+        </svg>
+        <div class="names">
+          <span class="suite">AUR</span>
+          <span class="module">FORGE</span>
+        </div>
+      </div>
+      <span class="tag" style="align-self:center;margin-left:6px">Analog heat · Digital law</span>
+      <div class="bar-spacer"></div>
+      <button class="assistant" type="button"><span class="dot"></span>Auto-Polish</button>
+      <button class="preset" type="button">
+        <span class="lbl">PRESET</span><span class="val">Vocal · Molten Air</span><span class="chev">▾</span>
+      </button>
+    </div>
+
+    <!-- hero analyzer -->
+    <div class="hero">
+      <canvas id="spec" width="1600" height="380"></canvas>
+      <div class="readout">
+        <span>SPECTRUM · <b id="ovs">4× OS</b></span>
+        <span>ALIAS <b>−102 dB</b></span>
+        <span>PHASE <b>LINEAR</b></span>
+      </div>
+      <div class="scale"><span>40</span><span>200</span><span>1k</span><span>5k</span><span>20k</span></div>
+    </div>
+
+    <!-- body -->
+    <div class="body">
+      <div class="chain">
+
+        <!-- CHARACTER centerpiece -->
+        <div class="character">
+          <svg class="big-dial" id="charDial" width="104" height="104" viewBox="0 0 104 104" role="slider"
+               aria-label="CHARACTER" aria-valuemin="0" aria-valuemax="100" aria-valuenow="46" tabindex="0"></svg>
+          <div class="cx">
+            <span class="t">CHARACTER</span>
+            <span class="s">Один макрос между чистым ядром и расплавленным теплом. Слева — прозрачно и по закону; справа — гармоники, лента, трансформатор.</span>
+            <div class="layers">
+              <span class="chip law">ZDF CORE</span>
+              <span class="chip heat">ADAA SAT</span>
+              <span class="chip heat">TAPE</span>
+              <span class="chip heat">IRON</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- chain modules -->
+        <div class="module-card on" data-mod>
+          <div class="mc-head"><span class="mc-name">SHAPE</span><span class="mc-sw" role="switch" aria-checked="true"></span></div>
+          <div class="knob-row" data-knobs='[{"l":"HPF","v":72,"u":"Hz","min":20,"max":300},{"l":"AIR","v":38,"u":"","min":0,"max":100}]'></div>
+        </div>
+        <div class="module-card on" data-mod>
+          <div class="mc-head"><span class="mc-name">COLOR</span><span class="mc-sw" role="switch" aria-checked="true"></span></div>
+          <div class="knob-row" data-knobs='[{"l":"DRIVE","v":54,"u":"","min":0,"max":100,"a":"heat"},{"l":"MIX","v":60,"u":"%","min":0,"max":100}]'></div>
+        </div>
+        <div class="module-card on" data-mod>
+          <div class="mc-head"><span class="mc-name">DYN</span><span class="mc-sw" role="switch" aria-checked="true"></span></div>
+          <div class="knob-row" data-knobs='[{"l":"COMP","v":44,"u":"","min":0,"max":100},{"l":"PUNCH","v":58,"u":"","min":0,"max":100}]'></div>
+        </div>
+        <div class="module-card on" data-mod>
+          <div class="mc-head"><span class="mc-name">TONE</span><span class="mc-sw" role="switch" aria-checked="true"></span></div>
+          <div class="knob-row" data-knobs='[{"l":"TILT","v":56,"u":"","min":0,"max":100},{"l":"FOCUS","v":40,"u":"","min":0,"max":100}]'></div>
+        </div>
+        <div class="module-card on" data-mod>
+          <div class="mc-head"><span class="mc-name">SPACE</span><span class="mc-sw" role="switch" aria-checked="true"></span></div>
+          <div class="knob-row" data-knobs='[{"l":"WIDTH","v":62,"u":"","min":0,"max":100},{"l":"DEPTH","v":30,"u":"","min":0,"max":100}]'></div>
+        </div>
+        <div class="module-card on" data-mod>
+          <div class="mc-head"><span class="mc-name">OUT · LIMIT</span><span class="mc-sw" role="switch" aria-checked="true"></span></div>
+          <div class="knob-row" data-knobs='[{"l":"GAIN","v":50,"u":"dB","min":0,"max":100},{"l":"CEIL","v":88,"u":"","min":0,"max":100,"a":"law"}]'></div>
+        </div>
+
+      </div>
+
+      <!-- meters -->
+      <div class="meters">
+        <div class="meter-block">
+          <div class="mtitle">LEVEL · GR</div>
+          <div class="bars">
+            <div class="bar-col"><div class="bar-track"><div class="bar-fill" id="mIn"></div></div><span class="bar-cap">IN</span></div>
+            <div class="bar-col"><div class="bar-track"><div class="bar-fill" id="mGr" style="background:linear-gradient(180deg,#FFC98A,#E85F2C)"></div></div><span class="bar-cap">GR</span></div>
+            <div class="bar-col"><div class="bar-track"><div class="bar-fill" id="mOut"></div></div><span class="bar-cap">OUT</span></div>
+          </div>
+        </div>
+        <div class="lufs">
+          <div class="row"><span class="k">LUFS · I</span><span><span class="v" id="lufs">−14.1</span><span class="u">LU</span></span></div>
+          <div class="row"><span class="k">TRUE PEAK</span><span><span class="v tp" id="tp">−1.0</span><span class="u">dBTP</span></span></div>
+          <div class="row"><span class="k">DR</span><span><span class="v" id="dr">11</span><span class="u">dB</span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== IDENTITY STRIP ===================== -->
+  <div class="identity">
+    <div class="id-head">
+      <span class="id-eyebrow">DESIGN LANGUAGE</span>
+      <h3 class="id-title">Тёплое железо, чистая кромка</h3>
+      <p class="id-sub">Палитра сама несёт тезис продукта: тёплая медная рампа — это аналоговый характер (насыщение, лента, трансформатор), холодная бирюза — метрология и «строго по законам» (LUFS, true-peak, линейная фаза). Не два стиля, а два слоя одного сигнала.</p>
+    </div>
+
+    <div class="palette" aria-label="Палитра">
+      <div class="sw" style="background:#FFC98A;color:#5A2B12">HEAT 1</div>
+      <div class="sw" style="background:#FF8A3D;color:#3a1607">HEAT 2 · ACCENT</div>
+      <div class="sw" style="background:#E85F2C;color:#2a0e05">HEAT 3</div>
+      <div class="sw" style="background:#8A2F1C;color:#F3ECE2">EMBER</div>
+      <div class="sw" style="background:#37B9A8;color:#052a26">LAW 2</div>
+      <div class="sw" style="background:#1C1815;color:#A6988A">PANEL</div>
+      <div class="sw" style="background:#141210;color:#6F6357">GROUND</div>
+    </div>
+
+    <div class="grid3">
+      <div class="card">
+        <span class="badge heat">SIGNATURE</span>
+        <h4>ОДИН МАКРОС «CHARACTER»</h4>
+        <p>Вся линейка управляется одной понятной осью: чистое ZDF-ядро → расплавленное тепло. Новичок крутит одну ручку, инженер раскрывает всю цепь. Это узнаваемый почерк, как «вайб» Soundtoys.</p>
+      </div>
+      <div class="card">
+        <span class="badge law">RIGOR</span>
+        <h4>ЧЕСТНЫЙ ANTI-ALIAS</h4>
+        <p>ADAA + оверсэмплинг в каждом нелинейном блоке — сатурация без «грязи» алиасинга. True-peak и LUFS нативно во всём. Это то, что отделяет великий сатуратор от посредственного.</p>
+      </div>
+      <div class="card">
+        <span class="badge heat">FUTURE</span>
+        <h4>ГИБРИД: ФИЗИКА + ML</h4>
+        <p>Точное физическое ядро (WDF/state-space) плюс лёгкий нейро-слой характера в реальном времени (RTNeural). Ассистент «Auto-Polish» слушает материал и предлагает старт.</p>
+      </div>
+    </div>
+
+    <div>
+      <span class="id-eyebrow" style="display:block;margin-bottom:11px">SUITE TAXONOMY</span>
+      <div class="taxo">
+        <span class="t"><span class="d" style="background:#FF8A3D"></span>TONE<span class="n">EQ · Sat · Tilt</span></span>
+        <span class="t"><span class="d" style="background:#E85F2C"></span>DYNAMICS<span class="n">Comp · Limit · MB</span></span>
+        <span class="t"><span class="d" style="background:#37B9A8"></span>SPACE<span class="n">Reverb · Delay · Width</span></span>
+        <span class="t"><span class="d" style="background:#8FCB6E"></span>REPAIR<span class="n">De-ess · Denoise</span></span>
+        <span class="t"><span class="d" style="background:#7FE6D6"></span>METER<span class="n">LUFS · Spectrum · TP</span></span>
+      </div>
+    </div>
+
+    <p class="footnote">Концепт · AUR — рабочее имя линейки (Aurveda Audio). FORGE — флагманский channel-strip, вырастает из уже собранного AudioPolish. Шрифты — системные стеки (моно для данных = технический, точный характер; sans для подписей). Живой анализатор, ручки и переключатели интерактивны — попробуй покрутить CHARACTER и DRIVE.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  var A0 = -135, A1 = 135;
+  function polar(cx,cy,r,deg){var a=(deg-90)*Math.PI/180;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  function arcPath(cx,cy,r,d0,d1){
+    var p0=polar(cx,cy,r,d0),p1=polar(cx,cy,r,d1);
+    var large=(d1-d0)<=180?0:1;
+    return "M"+p0[0].toFixed(2)+" "+p0[1].toFixed(2)+" A"+r+" "+r+" 0 "+large+" 1 "+p1[0].toFixed(2)+" "+p1[1].toFixed(2);
+  }
+  function accentColor(a){return a==='law'?'#37B9A8':'#FF8A3D';}
+
+  function makeKnob(opts){
+    var size=opts.size||46, cx=size/2, cy=size/2, r=size/2-6;
+    var acc=accentColor(opts.a);
+    var ns='http://www.w3.org/2000/svg';
+    var svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('width',size);svg.setAttribute('height',size);
+    svg.setAttribute('viewBox','0 0 '+size+' '+size);
+    var track=document.createElementNS(ns,'path');
+    track.setAttribute('d',arcPath(cx,cy,r,A0,A1));
+    track.setAttribute('fill','none');track.setAttribute('stroke','#332A24');
+    track.setAttribute('stroke-width','3.2');track.setAttribute('stroke-linecap','round');
+    var val=document.createElementNS(ns,'path');
+    val.setAttribute('fill','none');val.setAttribute('stroke',acc);
+    val.setAttribute('stroke-width','3.2');val.setAttribute('stroke-linecap','round');
+    var body=document.createElementNS(ns,'circle');
+    body.setAttribute('cx',cx);body.setAttribute('cy',cy);body.setAttribute('r',r-5.5);
+    body.setAttribute('fill','#231E1A');body.setAttribute('stroke','#443830');body.setAttribute('stroke-width','1');
+    var ptr=document.createElementNS(ns,'line');
+    ptr.setAttribute('stroke','#F3ECE2');ptr.setAttribute('stroke-width','2');ptr.setAttribute('stroke-linecap','round');
+    svg.appendChild(track);svg.appendChild(val);svg.appendChild(body);svg.appendChild(ptr);
+    return {svg:svg,val:val,ptr:ptr,cx:cx,cy:cy,r:r,acc:acc};
+  }
+
+  function bindKnob(container, cfg){
+    var wrap=document.createElement('div');wrap.className='knob';
+    var dial=document.createElement('div');dial.className='dial';
+    var K=makeKnob({size:46,a:cfg.a});
+    dial.appendChild(K.svg);
+    var kv=document.createElement('span');kv.className='kv';
+    var kl=document.createElement('span');kl.className='kl';kl.textContent=cfg.l;
+    wrap.appendChild(dial);wrap.appendChild(kv);wrap.appendChild(kl);
+    container.appendChild(wrap);
+
+    var value=cfg.v;
+    function render(){
+      var deg=A0+(A1-A0)*(value/100);
+      K.val.setAttribute('d',arcPath(K.cx,K.cy,K.r,A0,deg));
+      var pp=polar(K.cx,K.cy,K.r-7,deg);
+      K.ptr.setAttribute('x1',K.cx);K.ptr.setAttribute('y1',K.cy);
+      K.ptr.setAttribute('x2',pp[0]);K.ptr.setAttribute('y2',pp[1]);
+      var real=cfg.min+(cfg.max-cfg.min)*(value/100);
+      kv.textContent = (cfg.u==='Hz')? Math.round(real)+' Hz' : (cfg.u==='%'? Math.round(real)+'%' : (cfg.u==='dB'? ((real-50>=0?'+':'')+Math.round(real-50))+' dB' : Math.round(real)));
+    }
+    render();
+    var dragY=0,dragV=0,active=false;
+    function down(e){active=true;dragY=(e.touches?e.touches[0].clientY:e.clientY);dragV=value;e.preventDefault();
+      window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+      window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',up);}
+    function move(e){if(!active)return;var y=(e.touches?e.touches[0].clientY:e.clientY);
+      value=Math.max(0,Math.min(100,dragV+(dragY-y)*0.6));render();e.preventDefault();}
+    function up(){active=false;window.removeEventListener('mousemove',move);window.removeEventListener('mouseup',up);
+      window.removeEventListener('touchmove',move);window.removeEventListener('touchend',up);}
+    dial.addEventListener('mousedown',down);dial.addEventListener('touchstart',down,{passive:false});
+    return {get:function(){return value;}};
+  }
+
+  document.querySelectorAll('[data-knobs]').forEach(function(row){
+    var cfgs=JSON.parse(row.getAttribute('data-knobs'));
+    cfgs.forEach(function(c){
+      var api=bindKnob(row,c);
+      if(c.l==='DRIVE') window.__drive=api;
+    });
+  });
+
+  document.querySelectorAll('.module-card').forEach(function(card){
+    var sw=card.querySelector('.mc-sw');
+    if(!sw)return;
+    sw.addEventListener('click',function(){
+      card.classList.toggle('off');card.classList.toggle('on');
+      var on=card.classList.contains('on');sw.setAttribute('aria-checked',on?'true':'false');
+    });
+  });
+
+  /* CHARACTER big dial */
+  var charEl=document.getElementById('charDial');
+  var ns='http://www.w3.org/2000/svg';
+  var C={cx:52,cy:52,r:42};
+  var cTrack=document.createElementNS(ns,'path');
+  cTrack.setAttribute('d',arcPath(C.cx,C.cy,C.r,A0,A1));
+  cTrack.setAttribute('fill','none');cTrack.setAttribute('stroke','#332A24');cTrack.setAttribute('stroke-width','5');cTrack.setAttribute('stroke-linecap','round');
+  var cVal=document.createElementNS(ns,'path');
+  cVal.setAttribute('fill','none');cVal.setAttribute('stroke','#FF8A3D');cVal.setAttribute('stroke-width','5');cVal.setAttribute('stroke-linecap','round');
+  var cBody=document.createElementNS(ns,'circle');
+  cBody.setAttribute('cx',C.cx);cBody.setAttribute('cy',C.cy);cBody.setAttribute('r',C.r-9);
+  cBody.setAttribute('fill','#1C1815');cBody.setAttribute('stroke','#443830');
+  var cTxt=document.createElementNS(ns,'text');
+  cTxt.setAttribute('x',C.cx);cTxt.setAttribute('y',C.cy+5);cTxt.setAttribute('text-anchor','middle');
+  cTxt.setAttribute('fill','#F3ECE2');cTxt.setAttribute('font-family','ui-monospace,monospace');cTxt.setAttribute('font-size','16');cTxt.setAttribute('font-weight','700');
+  charEl.appendChild(cTrack);charEl.appendChild(cVal);charEl.appendChild(cBody);charEl.appendChild(cTxt);
+  var charV=46;
+  function renderChar(){
+    var deg=A0+(A1-A0)*(charV/100);
+    cVal.setAttribute('d',arcPath(C.cx,C.cy,C.r,A0,deg));
+    var t=charV/100;
+    var col = t<0.4 ? '#37B9A8' : (t<0.6?'#FFC98A':'#FF8A3D');
+    cVal.setAttribute('stroke',col);
+    cTxt.textContent=Math.round(charV);
+    charEl.setAttribute('aria-valuenow',Math.round(charV));
+  }
+  renderChar();
+  (function(){
+    var dy=0,dv=0,act=false;
+    function down(e){act=true;dy=(e.touches?e.touches[0].clientY:e.clientY);dv=charV;e.preventDefault();
+      window.addEventListener('mousemove',mv);window.addEventListener('mouseup',up);
+      window.addEventListener('touchmove',mv,{passive:false});window.addEventListener('touchend',up);}
+    function mv(e){if(!act)return;var y=(e.touches?e.touches[0].clientY:e.clientY);
+      charV=Math.max(0,Math.min(100,dv+(dy-y)*0.6));renderChar();e.preventDefault();}
+    function up(){act=false;window.removeEventListener('mousemove',mv);window.removeEventListener('mouseup',up);
+      window.removeEventListener('touchmove',mv);window.removeEventListener('touchend',up);}
+    charEl.addEventListener('mousedown',down);charEl.addEventListener('touchstart',down,{passive:false});
+    charEl.addEventListener('keydown',function(e){
+      if(e.key==='ArrowUp'||e.key==='ArrowRight'){charV=Math.min(100,charV+2);renderChar();e.preventDefault();}
+      if(e.key==='ArrowDown'||e.key==='ArrowLeft'){charV=Math.max(0,charV-2);renderChar();e.preventDefault();}
+    });
+  })();
+  window.__char=function(){return charV;};
+
+  /* SPECTRUM analyzer */
+  var cv=document.getElementById('spec'),ctx=cv.getContext('2d');
+  var W=cv.width,H=cv.height,N=96;
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(68,56,48,.5)';ctx.lineWidth=1;
+    for(var gx=0.2;gx<1;gx+=0.2){ctx.beginPath();ctx.moveTo(gx*W,0);ctx.lineTo(gx*W,H);ctx.stroke();}
+    var drive = window.__drive?window.__drive.get():54;
+    var heat = window.__char?window.__char()/100:0.46;
+    var grad=ctx.createLinearGradient(0,H,0,0);
+    grad.addColorStop(0,'rgba(138,47,28,.15)');
+    grad.addColorStop(0.55,'rgba(232,95,44,.55)');
+    grad.addColorStop(1,'rgba(255,201,138,.95)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();ctx.moveTo(0,H);
+    var barW=W/N;
+    for(var i=0;i<=N;i++){
+      var f=i/N;
+      var base=Math.pow(1-f,1.35);
+      var wob=(0.5+0.5*Math.sin(t*0.0016+i*0.5)+0.4*Math.sin(t*0.0009+i*1.7))/1.9;
+      var harm=0;
+      for(var k=1;k<=5;k++){var hp=Math.exp(-Math.pow((f-(0.12*k))*22,2));harm+=hp*(k%2? (0.5+heat*0.9):(0.25+drive/220));}
+      var hi = heat*Math.pow(f,1.4)*0.5;
+      var amp=(base*0.72+harm*0.16+hi*0.15)*(0.55+0.45*wob);
+      var y=H-Math.max(2,amp*H*0.96);
+      ctx.lineTo(i*barW,y);
+    }
+    ctx.lineTo(W,H);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(255,201,138,.9)';ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(var j=0;j<=N;j++){
+      var f2=j/N,base2=Math.pow(1-f2,1.35);
+      var wob2=(0.5+0.5*Math.sin(t*0.0016+j*0.5)+0.4*Math.sin(t*0.0009+j*1.7))/1.9;
+      var harm2=0;for(var k2=1;k2<=5;k2++){var hp2=Math.exp(-Math.pow((f2-(0.12*k2))*22,2));harm2+=hp2*(k2%2?(0.5+heat*0.9):(0.25+drive/220));}
+      var amp2=(base2*0.72+harm2*0.16+heat*Math.pow(f2,1.4)*0.075)*(0.55+0.45*wob2);
+      var yy=H-Math.max(2,amp2*H*0.96);
+      if(j===0)ctx.moveTo(0,yy);else ctx.lineTo(j*barW,yy);
+    }
+    ctx.stroke();
+  }
+
+  var mIn=document.getElementById('mIn'),mGr=document.getElementById('mGr'),mOut=document.getElementById('mOut');
+  var lufs=document.getElementById('lufs'),tp=document.getElementById('tp'),dr=document.getElementById('dr');
+  mIn.style.background='linear-gradient(180deg,#37B9A8,#7FE6D6)';
+  mOut.style.background='linear-gradient(180deg,#FF8A3D,#FFC98A)';
+  function meters(t){
+    var a=0.6+0.32*Math.sin(t*0.002),b=0.55+0.3*Math.sin(t*0.0023+1);
+    var gr=0.15+0.5*Math.max(0,Math.sin(t*0.004));
+    mIn.style.height=(a*100)+'%';mOut.style.height=(b*100)+'%';mGr.style.height=(gr*70)+'%';
+    lufs.textContent=(-14.1+Math.sin(t*0.0007)*0.4).toFixed(1);
+    tp.textContent=(-1.0+Math.sin(t*0.0011)*0.3).toFixed(1);
+    dr.textContent=Math.round(11+Math.sin(t*0.0006)*1.5);
+  }
+
+  if(reduce){ draw(1200); meters(500); }
+  else{
+    var start=null;
+    function loop(ts){ if(!start)start=ts; var t=ts-start; draw(t); meters(t); requestAnimationFrame(loop); }
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
