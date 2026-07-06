@@ -33,6 +33,13 @@ public:
         slider.setBounds (b);
     }
 
+    /** Re-read caption colour/font from the current Theme (fires on theme swap). */
+    void lookAndFeelChanged() override
+    {
+        label.setFont (monoFont (theme().fsLabel, true));
+        label.setColour (juce::Label::textColourId, theme().inkMute);
+    }
+
     juce::Slider& getSlider() { return slider; }
 
 private:

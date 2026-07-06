@@ -38,13 +38,32 @@ EmberEditor::EmberEditor (EmberProcessor& p)
     bypassAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
         apvts, ParamID::bypass, bypassButton);
 
+    // Live theme switch — proves the shared AurvedaUI design system.
+    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
+    themeBox.setSelectedId (1, juce::dontSendNotification);
+    addAndMakeVisible (themeBox);
+    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
+
     addAndMakeVisible (inMeter);
     addAndMakeVisible (outMeter);
 
-    setSize (720, 420);
+    setSize (800, 420);
 }
 
 EmberEditor::~EmberEditor() { setLookAndFeel (nullptr); }
+
+void EmberEditor::applyThemeChoice (int index)
+{
+    switch (index)
+    {
+        case 1:  aur::ui::setTheme (aur::ui::obsidianTheme()); break;
+        case 2:  aur::ui::setTheme (aur::ui::fluxTheme());     break;
+        default: aur::ui::setTheme (aur::ui::moltenTheme());   break;
+    }
+    lnf.applyTheme();          // re-read JUCE colour IDs from the new theme
+    sendLookAndFeelChange();   // propagate to all child components
+    repaint();
+}
 
 void EmberEditor::refreshPresetBox()
 {
@@ -75,10 +94,11 @@ void EmberEditor::resized()
     auto area = getLocalBounds().reduced (18);
 
     auto header = area.removeFromTop (56);
-    header.removeFromLeft (240);
-    bypassButton.setBounds (header.removeFromRight (100).reduced (4, 12));
-    presetBox.setBounds    (header.removeFromRight (170).reduced (4, 14));
-    flavorBox.setBounds    (header.removeFromRight (120).reduced (4, 14));
+    header.removeFromLeft (230);
+    bypassButton.setBounds (header.removeFromRight (96).reduced (4, 12));
+    themeBox.setBounds     (header.removeFromRight (96).reduced (4, 14));
+    presetBox.setBounds    (header.removeFromRight (150).reduced (4, 14));
+    flavorBox.setBounds    (header.removeFromRight (104).reduced (4, 14));
 
     area.removeFromTop (6);
 

@@ -24,8 +24,10 @@ private:
 
     std::unique_ptr<aur::ui::LabeledKnob> driveKnob, inputKnob, mixKnob, toneKnob, outputKnob;
 
-    juce::ComboBox flavorBox, presetBox;
+    juce::ComboBox flavorBox, presetBox, themeBox;
     juce::TextButton bypassButton { "BYPASS" };
+
+    void applyThemeChoice (int index);
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> flavorAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   bypassAttachment;
