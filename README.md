@@ -41,14 +41,20 @@ Two shared foundations make the whole line feel like one product:
 
 | Module   | Category | Status |
 |----------|----------|--------|
-| **EMBER**   | Saturator (Tube/Tape/Iron) | ✅ v0.1 — building |
+| **EMBER**   | Saturator (Tube/Tape/Iron) | ✅ v0.1 built |
+| **CLARITY** | Perceptual resonance suppressor (critical-band) | ✅ v0.1 built — the revolutionary one |
 | FORGE    | Channel strip | design concept |
 | PRISM    | EQ (dynamic + natural phase) | planned |
 | GRIP     | Compressor | planned |
 | CEIL     | Limiter (true-peak / LUFS) | planned |
 | HAZE     | Reverb / space | planned |
-| **CLARITY** | Perceptual de-mask (critical-band) | planned — the revolutionary one |
 | SCOPE    | Metering | planned |
+
+CLARITY is the white-space bet: dynamic, perceptual resonance suppression
+(Bark-spaced detectors, ducking only bands that protrude above the local
+spectral trend). Offline proof — a 2 kHz resonance injected into noise:
+`2 kHz −14.1 dB, 500 Hz −0.7 dB, 6 kHz +0.2 dB` — it removes the resonance and
+leaves the neighbours alone. Realtime-safe, zero latency.
 
 ## Why ADAA (the "warm but correct" proof)
 
