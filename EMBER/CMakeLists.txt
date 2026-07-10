@@ -22,7 +22,8 @@ juce_add_plugin(EMBER
     BUNDLE_ID                com.aurveda.aur.ember
     PLUGIN_MANUFACTURER_CODE Aurv
     PLUGIN_CODE              Aem1
-    FORMATS                  VST3 Standalone
+    FORMATS                  AU VST3 Standalone
+    AU_MAIN_TYPE             kAudioUnitType_Effect
     PRODUCT_NAME             "AUR EMBER"
     IS_SYNTH                 FALSE
     NEEDS_MIDI_INPUT         FALSE

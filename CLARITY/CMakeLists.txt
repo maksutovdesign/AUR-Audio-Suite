@@ -21,7 +21,8 @@ juce_add_plugin(CLARITY
     BUNDLE_ID                com.aurveda.aur.clarity
     PLUGIN_MANUFACTURER_CODE Aurv
     PLUGIN_CODE              Acl1
-    FORMATS                  VST3 Standalone
+    FORMATS                  AU VST3 Standalone
+    AU_MAIN_TYPE             kAudioUnitType_Effect
     PRODUCT_NAME             "AUR CLARITY"
     IS_SYNTH                 FALSE
     NEEDS_MIDI_INPUT         FALSE
