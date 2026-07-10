@@ -50,6 +50,7 @@ Two shared foundations make the whole line feel like one product:
 | **SCOPE**   | Metering (spectrum/LUFS/correlation) | ✅ v0.1 built · AU-validated |
 | **IMAGER**  | Stereo width · mono-maker · balance | ✅ v0.1 built · AU-validated |
 | **DELAY**   | Stereo echo · ping-pong · damped feedback | ✅ v0.1 built · AU-validated |
+| **MOTION**  | Dynamic EQ (3 bands) | ✅ v0.1 built · AU-validated |
 | FORGE    | Channel strip (combines the chain) | design concept |
 
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
