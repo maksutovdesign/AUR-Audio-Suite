@@ -45,8 +45,8 @@ Two shared foundations make the whole line feel like one product:
 | **CLARITY** | Perceptual resonance suppressor + spectrum | ✅ v0.1 built · AU-validated — the revolutionary one |
 | **GRIP**    | Character compressor | ✅ v0.1 built · AU-validated |
 | **CEIL**    | True-peak limiter + LUFS | ✅ v0.1 built · AU-validated |
+| **PRISM**   | Parametric EQ + spectrum/curve | ✅ v0.1 built · AU-validated |
 | FORGE    | Channel strip | design concept |
-| PRISM    | EQ (dynamic + natural phase) | planned |
 | HAZE     | Reverb / space | planned |
 | SCOPE    | Metering | planned |
 
