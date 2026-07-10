@@ -5,6 +5,7 @@
 #include "AurLookAndFeel.h"
 #include "Knob.h"
 #include "MeterComponent.h"
+#include "SpectrumView.h"
 
 /** AUR CLARITY editor — shared AurvedaUI design system. */
 class ClarityEditor : public juce::AudioProcessorEditor
@@ -24,6 +25,7 @@ private:
     aur::ui::AurLookAndFeel lnf;
 
     std::unique_ptr<aur::ui::LabeledKnob> depthKnob, sensKnob, sharpKnob, mixKnob;
+    SpectrumView spectrum { audioProcessor.getSuppressor() };
 
     juce::ComboBox presetBox, themeBox;
     juce::TextButton deltaButton { "DELTA" };

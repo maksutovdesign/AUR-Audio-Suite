@@ -43,6 +43,7 @@ public:
 
     juce::AudioProcessorValueTreeState& getAPVTS() { return apvts; }
     aur::MeterState& getMeterState() { return meters; }
+    aur::ResonanceSuppressor& getSuppressor() { return suppressor; }
 
 private:
     juce::AudioProcessorValueTreeState apvts;

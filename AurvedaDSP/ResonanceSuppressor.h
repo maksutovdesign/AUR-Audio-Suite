@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <array>
+#include <atomic>
 #include "Biquad.h"
 
 namespace aur
@@ -81,6 +82,12 @@ public:
         }
     }
 
+    // ---- Visualisation snapshot (lock-free; audio writes, UI reads) ----
+    size_t numBands()          const { return kBands; }
+    float  vizCentre (size_t i) const { return (float) centre[i]; }
+    float  vizLevelDb (size_t i) const { return vizLevel[i].load (std::memory_order_relaxed); }
+    float  vizReductionDb (size_t i) const { return vizRed[i].load (std::memory_order_relaxed); }
+
     /** In-place processing. data[ch][n]. If delta==true, outputs only what was removed. */
     void process (float* const* data, int numChIn, int numSamples, bool delta = false)
     {
@@ -143,6 +150,9 @@ private:
 
             for (size_t c = 0; c < channels; ++c)
                 cut[b][c].setPeaking (fs, centre[b], sharpQ, -(double) curRed[b]);
+
+            vizLevel[b].store (dB[b], std::memory_order_relaxed);
+            vizRed[b].store   (curRed[b], std::memory_order_relaxed);
         }
     }
 
@@ -154,6 +164,8 @@ private:
     std::array<std::array<Biquad, kMaxCh>, kBands> cut {};
     std::array<float, kBands> env {};
     std::array<float, kBands> curRed {};
+    std::array<std::atomic<float>, kBands> vizLevel {};
+    std::array<std::atomic<float>, kBands> vizRed {};
 
     float atkC = 0.0f, relC = 0.0f, redAtkC = 0.0f, redRelC = 0.0f;
     float depthScale = 0.8f, threshold = 3.0f, mix = 1.0f;
