@@ -53,10 +53,12 @@ Two shared foundations make the whole line feel like one product:
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
 pass Apple's `auval` host validator.
 
-CLARITY is the white-space bet: dynamic, perceptual resonance suppression
-(Bark-spaced detectors, ducking only bands that protrude above the local
-spectral trend). Offline proof — a 2 kHz resonance injected into noise:
-`2 kHz −14.1 dB, 500 Hz −0.7 dB, 6 kHz +0.2 dB` — it removes the resonance and
+CLARITY is the white-space bet: dynamic, perceptual resonance suppression.
+An **FFT analyser** folds the spectrum onto a Bark (critical-band) grid and
+ducks only bands that protrude above the local spectral trend; the audio path
+is a cascade of time-domain peaking cuts (clean reconstruction). Offline proof
+— a 2 kHz resonance injected into noise:
+`2 kHz −14.3 dB, 500 Hz −0.5 dB, 6 kHz −0.5 dB` — it removes the resonance and
 leaves the neighbours alone. Realtime-safe, zero latency.
 
 ## Why ADAA (the "warm but correct" proof)

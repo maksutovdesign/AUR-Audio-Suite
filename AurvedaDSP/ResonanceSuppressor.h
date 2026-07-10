@@ -4,52 +4,78 @@
 #include <array>
 #include <atomic>
 #include "Biquad.h"
+#include "SimpleFFT.h"
 
 namespace aur
 {
 /**
     ResonanceSuppressor — the core of CLARITY.
 
-    Dynamic, perceptual resonance suppression. A bank of Bark-spaced bandpass
-    detectors measures the running spectrum; any band that sticks out ABOVE the
-    local spectral trend (its neighbours) is treated as a resonance and ducked
-    by a matching peaking cut, only while and where it protrudes. Nothing is
-    boosted, and flat/broadband content is left alone — so it removes harshness
-    and mud without the "processed" sound of static EQ.
+    Dynamic, perceptual resonance suppression. An FFT analyser measures the
+    running spectrum and folds it onto a Bark-like (critical-band) grid; any
+    band that sticks out ABOVE the local spectral trend (the average across
+    bands) is treated as a resonance and ducked by a matching peaking cut, only
+    while and where it protrudes. Nothing is boosted, and flat/broadband
+    content is left alone — so it removes harshness and mud without the
+    "processed" sound of static EQ.
 
-    Why "perceptual": bands sit on a Bark-like (critical-band) grid and the
-    baseline is the smoothed average across neighbours (a masking-style
-    reference), rather than an absolute threshold.
-
-    Realtime-safe: fixed arrays, in-place biquad retuning, no allocation.
-    Pure C++ (no JUCE) so it can be unit-tested offline.
+    Detection is FFT-based (fine frequency resolution, like the best tools);
+    the audio path is a cascade of time-domain peaking cuts (clean
+    reconstruction, no overlap-add artefacts). Realtime-safe: fixed arrays,
+    in-place biquad retuning, no allocation. Pure C++ (no JUCE) so it can be
+    unit-tested offline.
 */
 class ResonanceSuppressor
 {
 public:
     static constexpr size_t kBands = 22;
     static constexpr size_t kMaxCh = 2;
+    static constexpr int    kFFT   = 1024;
+    static constexpr int    kHop   = 256;
+    static constexpr int    kHalf  = kFFT / 2;
 
     void prepare (double sampleRate, int /*maxBlock*/, int numChannels)
     {
         fs = sampleRate;
         channels = (numChannels < (int) kMaxCh) ? (size_t) numChannels : kMaxCh;
 
-        // Bark-ish log-spaced centres, 160 Hz .. 14 kHz.
         const double lo = 160.0, hi = 14000.0;
         for (size_t b = 0; b < kBands; ++b)
         {
             const double t = (double) b / (double) (kBands - 1);
             centre[b] = lo * std::pow (hi / lo, t);
-            detect[b].setBandpass (fs, centre[b], detectorQ);
             for (size_t c = 0; c < kMaxCh; ++c)
                 cut[b][c].setPeaking (fs, centre[b], sharpQ, 0.0);
         }
 
-        atkC    = (float) std::exp (-1.0 / (0.002 * fs));   // 2 ms
-        relC    = (float) std::exp (-1.0 / (0.080 * fs));   // 80 ms
-        redAtkC = (float) std::exp (-1.0 / (0.005 * fs));
-        redRelC = (float) std::exp (-1.0 / (0.060 * fs));
+        // Hann analysis window.
+        for (int i = 0; i < kFFT; ++i)
+            win[(size_t) i] = 0.5f - 0.5f * (float) std::cos (2.0 * M_PI * i / (kFFT - 1));
+
+        // Map each FFT bin to its nearest band (log distance); track band bin
+        // counts and each band's nearest bin (fallback for empty bands).
+        for (size_t b = 0; b < kBands; ++b) { bandCnt[b] = 0; nearestBin[b] = 1; }
+        std::array<double, kBands> bestDist;
+        for (size_t b = 0; b < kBands; ++b) bestDist[b] = 1e30;
+        for (int k = 1; k <= kHalf; ++k)
+        {
+            const double f = (double) k * fs / (double) kFFT;
+            size_t bb = 0; double best = 1e30;
+            for (size_t b = 0; b < kBands; ++b)
+            {
+                const double d = std::abs (std::log (f) - std::log (centre[b]));
+                if (d < best) { best = d; bb = b; }
+            }
+            binBand[(size_t) k] = (int) bb;
+            bandCnt[bb]++;
+            if (best < bestDist[bb]) { bestDist[bb] = best; nearestBin[bb] = k; }
+        }
+
+        // Per-hop envelope coefficients.
+        envAtk = (float) std::exp (-(double) kHop / (0.010 * fs));
+        envRel = (float) std::exp (-(double) kHop / (0.120 * fs));
+        redAtk = (float) std::exp (-(double) kHop / (0.005 * fs));
+        redRel = (float) std::exp (-(double) kHop / (0.060 * fs));
         reset();
     }
 
@@ -57,22 +83,22 @@ public:
     {
         for (size_t b = 0; b < kBands; ++b)
         {
-            detect[b].reset();
             for (size_t c = 0; c < kMaxCh; ++c) cut[b][c].reset();
-            env[b]    = 1.0e-6f;
+            env[b] = 1.0e-6f;
             curRed[b] = 0.0f;
         }
-        sampleCounter = 0;
+        for (int i = 0; i < kFFT; ++i) ring[(size_t) i] = 0.0f;
+        ringPos = 0;
+        hopCount = 0;
     }
 
-    /** depth 0..100, sensitivityDb (threshold above baseline), sharpness 0..100 (Q). */
     void setParameters (float depth, float sensitivityDb, float sharpness, float mixPercent)
     {
-        depthScale = depth / 100.0f * 1.6f;          // excess dB → reduction dB
+        depthScale = depth / 100.0f * 1.6f;
         threshold  = sensitivityDb;
         mix        = mixPercent / 100.0f;
 
-        const float newQ = 1.5f + (sharpness / 100.0f) * 8.5f; // 1.5 .. 10
+        const float newQ = 1.5f + (sharpness / 100.0f) * 8.5f;
         if (std::abs (newQ - sharpQ) > 0.01f)
         {
             sharpQ = newQ;
@@ -83,39 +109,30 @@ public:
     }
 
     // ---- Visualisation snapshot (lock-free; audio writes, UI reads) ----
-    size_t numBands()          const { return kBands; }
-    float  vizCentre (size_t i) const { return (float) centre[i]; }
+    size_t numBands()            const { return kBands; }
+    float  vizCentre (size_t i)  const { return (float) centre[i]; }
     float  vizLevelDb (size_t i) const { return vizLevel[i].load (std::memory_order_relaxed); }
     float  vizReductionDb (size_t i) const { return vizRed[i].load (std::memory_order_relaxed); }
 
-    /** In-place processing. data[ch][n]. If delta==true, outputs only what was removed. */
     void process (float* const* data, int numChIn, int numSamples, bool delta = false)
     {
         const size_t nc = ((size_t) numChIn < channels) ? (size_t) numChIn : channels;
 
         for (int n = 0; n < numSamples; ++n)
         {
-            // Mono detection signal.
             float mono = 0.0f;
             for (size_t c = 0; c < nc; ++c) mono += data[c][n];
             mono /= (float) (nc > 0 ? nc : 1);
 
-            // Per-band detector envelopes (peak follower).
-            for (size_t b = 0; b < kBands; ++b)
+            ring[(size_t) ringPos] = mono;
+            ringPos = (ringPos + 1) & (kFFT - 1);
+
+            if (++hopCount >= kHop)
             {
-                const float bp = std::abs (detect[b].process (mono));
-                const float coeff = bp > env[b] ? atkC : relC;
-                env[b] = coeff * (env[b] - bp) + bp;
+                hopCount = 0;
+                analyseAndUpdate();
             }
 
-            // Control-rate: recompute reduction targets + retune cut filters.
-            if (--sampleCounter <= 0)
-            {
-                sampleCounter = controlHop;
-                updateReductions();
-            }
-
-            // Audio path: cascade of dynamic peaking cuts.
             for (size_t c = 0; c < nc; ++c)
             {
                 const float dry = data[c][n];
@@ -128,12 +145,38 @@ public:
     }
 
 private:
-    void updateReductions()
+    void analyseAndUpdate()
     {
+        // Assemble windowed frame (oldest sample first) and transform.
+        for (int i = 0; i < kFFT; ++i)
+        {
+            const size_t si = (size_t) i;
+            re[si] = (double) (ring[(size_t) ((ringPos + i) & (kFFT - 1))] * win[si]);
+            im[si] = 0.0;
+        }
+        SimpleFFT::forward (re.data(), im.data(), kFFT);
+
+        for (int k = 1; k <= kHalf; ++k)
+        {
+            const size_t sk = (size_t) k;
+            mag[sk] = std::sqrt (re[sk] * re[sk] + im[sk] * im[sk]);
+        }
+
+        // Fold bins onto bands (mean magnitude per band).
+        std::array<double, kBands> acc {};
+        for (int k = 1; k <= kHalf; ++k)
+            acc[(size_t) binBand[(size_t) k]] += mag[(size_t) k];
+
         float dB[kBands];
         float mean = 0.0f;
         for (size_t b = 0; b < kBands; ++b)
         {
+            const double raw = (bandCnt[b] > 0) ? acc[b] / (double) bandCnt[b]
+                                                : mag[(size_t) nearestBin[b]];
+            const float target = (float) raw;
+            const float coeff = target > env[b] ? envAtk : envRel;
+            env[b] = coeff * (env[b] - target) + target;
+
             dB[b] = 20.0f * std::log10 (env[b] + 1.0e-9f);
             mean += dB[b];
         }
@@ -141,11 +184,11 @@ private:
 
         for (size_t b = 0; b < kBands; ++b)
         {
-            const float excess = dB[b] - mean - threshold;      // how far it protrudes
+            const float excess = dB[b] - mean - threshold;
             float target = excess > 0.0f ? excess * depthScale : 0.0f;
             if (target > maxReduction) target = maxReduction;
 
-            const float coeff = target > curRed[b] ? redAtkC : redRelC;
+            const float coeff = target > curRed[b] ? redAtk : redRel;
             curRed[b] = coeff * (curRed[b] - target) + target;
 
             for (size_t c = 0; c < channels; ++c)
@@ -160,19 +203,25 @@ private:
     size_t channels = 2;
 
     std::array<double, kBands> centre {};
-    std::array<Biquad, kBands> detect {};
     std::array<std::array<Biquad, kMaxCh>, kBands> cut {};
     std::array<float, kBands> env {};
     std::array<float, kBands> curRed {};
     std::array<std::atomic<float>, kBands> vizLevel {};
     std::array<std::atomic<float>, kBands> vizRed {};
 
-    float atkC = 0.0f, relC = 0.0f, redAtkC = 0.0f, redRelC = 0.0f;
-    float depthScale = 0.8f, threshold = 3.0f, mix = 1.0f;
-    float detectorQ = 4.0f, sharpQ = 4.0f;
-    static constexpr float maxReduction = 18.0f;
+    // FFT analysis state.
+    std::array<float, kFFT>  win {};
+    std::array<float, kFFT>  ring {};
+    std::array<double, kFFT> re {};
+    std::array<double, kFFT> im {};
+    std::array<double, kHalf + 1> mag {};
+    std::array<int, kHalf + 1> binBand {};
+    std::array<int, kBands> nearestBin {};
+    std::array<int, kBands> bandCnt {};
+    int ringPos = 0, hopCount = 0;
 
-    int controlHop = 32;
-    int sampleCounter = 0;
+    float envAtk = 0.0f, envRel = 0.0f, redAtk = 0.0f, redRel = 0.0f;
+    float depthScale = 0.8f, threshold = 3.0f, mix = 1.0f, sharpQ = 4.0f;
+    static constexpr float maxReduction = 18.0f;
 };
 } // namespace aur
