@@ -11,7 +11,7 @@ export COPYFILE_DISABLE=1   # keep AppleDouble ._ sidecars out of the payload
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="0.1.0"
-MODULES=(EMBER CLARITY GRIP CEIL PRISM HAZE SCOPE IMAGER DELAY MOTION)
+MODULES=(EMBER CLARITY GRIP CEIL PRISM HAZE SCOPE IMAGER DELAY MOTION ASSIST)
 
 STAGE="$ROOT/dist/stage"
 VST3_DST="$STAGE/Library/Audio/Plug-Ins/VST3"
