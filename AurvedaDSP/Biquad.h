@@ -43,6 +43,34 @@ struct Biquad
         a2 = (1.0 - alpha) / a0;
     }
 
+    void setHighpass (double fs, double freq, double Q)
+    {
+        const double w0 = 2.0 * M_PI * freq / fs;
+        const double cw = std::cos (w0), sw = std::sin (w0);
+        const double alpha = sw / (2.0 * Q);
+        const double a0 = 1.0 + alpha;
+        b0 =  (1.0 + cw) / 2.0 / a0;
+        b1 = -(1.0 + cw)       / a0;
+        b2 =  (1.0 + cw) / 2.0 / a0;
+        a1 = (-2.0 * cw)       / a0;
+        a2 =  (1.0 - alpha)    / a0;
+    }
+
+    void setHighShelf (double fs, double freq, double Q, double gainDb)
+    {
+        const double A  = std::pow (10.0, gainDb / 40.0);
+        const double w0 = 2.0 * M_PI * freq / fs;
+        const double cw = std::cos (w0), sw = std::sin (w0);
+        const double alpha = sw / (2.0 * Q);
+        const double tsa = 2.0 * std::sqrt (A) * alpha;
+        const double a0 =        (A + 1.0) - (A - 1.0) * cw + tsa;
+        b0 =        A * ((A + 1.0) + (A - 1.0) * cw + tsa) / a0;
+        b1 = -2.0 * A * ((A - 1.0) + (A + 1.0) * cw)       / a0;
+        b2 =        A * ((A + 1.0) + (A - 1.0) * cw - tsa) / a0;
+        a1 =  2.0 *     ((A - 1.0) - (A + 1.0) * cw)       / a0;
+        a2 =           ((A + 1.0) - (A - 1.0) * cw - tsa) / a0;
+    }
+
     inline float process (float x) noexcept
     {
         const double y = b0 * (double) x + z1;
