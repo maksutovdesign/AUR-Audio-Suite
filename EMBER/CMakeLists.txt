@@ -36,7 +36,8 @@ target_sources(EMBER PRIVATE
     Source/PluginEditor.cpp
     Source/Presets.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaUI/AurLookAndFeel.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaUI/MeterComponent.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaUI/MeterComponent.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../AurvedaUI/SpectrumAnalyzer.cpp)
 
 target_compile_definitions(EMBER PUBLIC
     JUCE_WEB_BROWSER=0

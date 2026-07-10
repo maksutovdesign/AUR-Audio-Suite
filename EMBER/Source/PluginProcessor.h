@@ -8,6 +8,7 @@
 #include "GainStage.h"
 #include "ToneTilt.h"
 #include "Metering.h"
+#include "AnalyzerFifo.h"
 
 /**
     AUR EMBER — alias-suppressed saturator. First module built on the shared
@@ -45,6 +46,7 @@ public:
 
     juce::AudioProcessorValueTreeState& getAPVTS() { return apvts; }
     aur::MeterState& getMeterState() { return meters; }
+    aur::AnalyzerFifo<4096>& getAnalyzer() { return analyzer; }
 
 private:
     void updateParams();
@@ -63,6 +65,7 @@ private:
     aur::ADAASaturator sat;
     aur::ToneTilt      tone;
     aur::MeterState    meters;
+    aur::AnalyzerFifo<4096> analyzer;
 
     juce::SmoothedValue<float> bypassMix { 0.0f };
     juce::AudioBuffer<float>   dryBuffer;

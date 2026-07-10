@@ -91,6 +91,13 @@ void EmberProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiB
     }
 
     meters.pushOutputPeak (buffer.getMagnitude (0, buffer.getNumSamples()));
+
+    // Feed the spectrum analyzer with the mono output.
+    const auto n = buffer.getNumSamples();
+    const auto* l = buffer.getReadPointer (0);
+    const auto* r = totalOut > 1 ? buffer.getReadPointer (1) : l;
+    for (int s = 0; s < n; ++s)
+        analyzer.push (0.5f * (l[s] + r[s]));
 }
 
 juce::AudioProcessorEditor* EmberProcessor::createEditor() { return new EmberEditor (*this); }

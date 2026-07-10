@@ -44,10 +44,11 @@ EmberEditor::EmberEditor (EmberProcessor& p)
     addAndMakeVisible (themeBox);
     themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
 
+    addAndMakeVisible (spectrum);
     addAndMakeVisible (inMeter);
     addAndMakeVisible (outMeter);
 
-    setSize (800, 420);
+    setSize (800, 500);
 }
 
 EmberEditor::~EmberEditor() { setLookAndFeel (nullptr); }
@@ -110,7 +111,10 @@ void EmberEditor::resized()
 
     area.removeFromRight (8);
 
-    auto centre = area.removeFromTop (200);
+    spectrum.setBounds (area.removeFromTop (150));
+    area.removeFromTop (10);
+
+    auto centre = area.removeFromTop (168);
     driveKnob->setBounds (centre.withSizeKeepingCentre (200, centre.getHeight()));
 
     auto row = area;

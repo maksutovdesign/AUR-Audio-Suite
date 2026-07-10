@@ -5,6 +5,7 @@
 #include "AurLookAndFeel.h"
 #include "Knob.h"
 #include "MeterComponent.h"
+#include "SpectrumAnalyzer.h"
 
 /** AUR EMBER editor — uses the shared AurvedaUI design system. UI only. */
 class EmberEditor : public juce::AudioProcessorEditor
@@ -23,6 +24,7 @@ private:
     aur::ui::AurLookAndFeel lnf;
 
     std::unique_ptr<aur::ui::LabeledKnob> driveKnob, inputKnob, mixKnob, toneKnob, outputKnob;
+    aur::ui::SpectrumAnalyzer spectrum { audioProcessor.getAnalyzer() };
 
     juce::ComboBox flavorBox, presetBox, themeBox;
     juce::TextButton bypassButton { "BYPASS" };
