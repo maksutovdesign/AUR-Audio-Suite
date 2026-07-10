@@ -41,14 +41,17 @@ Two shared foundations make the whole line feel like one product:
 
 | Module   | Category | Status |
 |----------|----------|--------|
-| **EMBER**   | Saturator (Tube/Tape/Iron) | ✅ v0.1 built |
-| **CLARITY** | Perceptual resonance suppressor (critical-band) | ✅ v0.1 built — the revolutionary one |
+| **EMBER**   | Saturator (Tube/Tape/Iron) + spectrum | ✅ v0.1 built · AU-validated |
+| **CLARITY** | Perceptual resonance suppressor + spectrum | ✅ v0.1 built · AU-validated — the revolutionary one |
+| **GRIP**    | Character compressor | ✅ v0.1 built · AU-validated |
 | FORGE    | Channel strip | design concept |
 | PRISM    | EQ (dynamic + natural phase) | planned |
-| GRIP     | Compressor | planned |
 | CEIL     | Limiter (true-peak / LUFS) | planned |
 | HAZE     | Reverb / space | planned |
 | SCOPE    | Metering | planned |
+
+All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
+pass Apple's `auval` host validator.
 
 CLARITY is the white-space bet: dynamic, perceptual resonance suppression
 (Bark-spaced detectors, ducking only bands that protrude above the local

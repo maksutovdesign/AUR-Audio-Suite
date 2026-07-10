@@ -11,7 +11,7 @@ class MeterComponent : public juce::Component,
                        private juce::Timer
 {
 public:
-    enum class Which { input, output };
+    enum class Which { input, output, gainReduction };
 
     MeterComponent (aur::MeterState& state, Which which, juce::String label);
     ~MeterComponent() override;

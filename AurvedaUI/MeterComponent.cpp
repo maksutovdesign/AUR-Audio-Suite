@@ -14,9 +14,18 @@ MeterComponent::~MeterComponent() { stopTimer(); }
 
 void MeterComponent::timerCallback()
 {
-    const auto peak = (which == Which::input) ? meterState.getInputPeak() : meterState.getOutputPeak();
-    const auto db   = juce::Decibels::gainToDecibels (peak, -60.0f);
-    auto target = juce::jlimit (0.0f, 1.0f, juce::jmap (db, -60.0f, 0.0f, 0.0f, 1.0f));
+    float target;
+    if (which == Which::gainReduction)
+    {
+        // Fuller bar = more reduction (0..18 dB range).
+        target = juce::jlimit (0.0f, 1.0f, meterState.getGainReductionDb() / 18.0f);
+    }
+    else
+    {
+        const auto peak = (which == Which::input) ? meterState.getInputPeak() : meterState.getOutputPeak();
+        const auto db   = juce::Decibels::gainToDecibels (peak, -60.0f);
+        target = juce::jlimit (0.0f, 1.0f, juce::jmap (db, -60.0f, 0.0f, 0.0f, 1.0f));
+    }
 
     if (target > displayValue) displayValue = target;
     else                       displayValue += (target - displayValue) * 0.2f;
@@ -41,8 +50,10 @@ void MeterComponent::paint (juce::Graphics& g)
     const auto fillH = barArea.getHeight() * displayValue;
     auto fill = barArea.withTop (barArea.getBottom() - fillH);
 
-    const auto colour = displayValue > 0.92f ? t.warning
-                        : (which == Which::input ? t.precision : t.accent);
+    juce::Colour colour;
+    if (which == Which::gainReduction) colour = t.accent2;
+    else if (displayValue > 0.92f)     colour = t.warning;
+    else                               colour = (which == Which::input ? t.precision : t.accent);
     g.setColour (colour);
     g.fillRoundedRectangle (fill, 3.0f);
 }
