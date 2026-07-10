@@ -47,8 +47,8 @@ Two shared foundations make the whole line feel like one product:
 | **CEIL**    | True-peak limiter + LUFS | ✅ v0.1 built · AU-validated |
 | **PRISM**   | Parametric EQ + spectrum/curve | ✅ v0.1 built · AU-validated |
 | **HAZE**    | Warm FDN reverb | ✅ v0.1 built · AU-validated |
-| FORGE    | Channel strip | design concept |
-| SCOPE    | Metering | planned |
+| **SCOPE**   | Metering (spectrum/LUFS/correlation) | ✅ v0.1 built · AU-validated |
+| FORGE    | Channel strip (combines the chain) | design concept |
 
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
 pass Apple's `auval` host validator.
