@@ -46,8 +46,8 @@ Two shared foundations make the whole line feel like one product:
 | **GRIP**    | Character compressor | ✅ v0.1 built · AU-validated |
 | **CEIL**    | True-peak limiter + LUFS | ✅ v0.1 built · AU-validated |
 | **PRISM**   | Parametric EQ + spectrum/curve | ✅ v0.1 built · AU-validated |
+| **HAZE**    | Warm FDN reverb | ✅ v0.1 built · AU-validated |
 | FORGE    | Channel strip | design concept |
-| HAZE     | Reverb / space | planned |
 | SCOPE    | Metering | planned |
 
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
