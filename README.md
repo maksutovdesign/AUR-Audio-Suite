@@ -55,6 +55,8 @@ Two shared foundations make the whole line feel like one product:
 | **FORGE**   | Channel strip · CHARACTER macro (whole chain) | ✅ v0.1 built · AU-validated |
 | **DEESS**   | Split-band de-esser (RX branch) | ✅ v0.1 built · AU-validated |
 | **DEHUM**   | Mains hum remover (RX branch) | ✅ v0.1 built · AU-validated |
+| **GATE**    | Noise gate / expander | ✅ v0.1 built · AU-validated |
+| **DENOISE** | Spectral noise reduction (learn profile) | ✅ v0.1 built · AU-validated |
 
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
 pass Apple's `auval` host validator.

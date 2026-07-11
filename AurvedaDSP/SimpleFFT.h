@@ -42,5 +42,14 @@ struct SimpleFFT
             }
         }
     }
+
+    /** Inverse FFT (conjugate → forward → conjugate → scale by 1/N). */
+    static void inverse (double* re, double* im, int N)
+    {
+        for (int i = 0; i < N; ++i) im[i] = -im[i];
+        forward (re, im, N);
+        const double inv = 1.0 / (double) N;
+        for (int i = 0; i < N; ++i) { re[i] *= inv; im[i] = -im[i] * inv; }
+    }
 };
 } // namespace aur
