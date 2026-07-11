@@ -1,0 +1,84 @@
+#include "PluginProcessor.h"
+#include "PluginEditor.h"
+#include "Presets.h"
+
+DehumProcessor::DehumProcessor()
+    : AudioProcessor (BusesProperties()
+        .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
+      apvts (*this, nullptr, "PARAMETERS", Params::createLayout())
+{
+    pFreq   = apvts.getRawParameterValue (ParamID::freq);
+    pHarm   = apvts.getRawParameterValue (ParamID::harmonics);
+    pDepth  = apvts.getRawParameterValue (ParamID::depth);
+    pQ      = apvts.getRawParameterValue (ParamID::q);
+    pBypass = apvts.getRawParameterValue (ParamID::bypass);
+}
+
+void DehumProcessor::prepareToPlay (double sampleRate, int)
+{
+    dehum.prepare (sampleRate, getTotalNumOutputChannels());
+}
+
+bool DehumProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+{
+    const auto& out = layouts.getMainOutputChannelSet();
+    if (out != juce::AudioChannelSet::mono() && out != juce::AudioChannelSet::stereo())
+        return false;
+    return layouts.getMainInputChannelSet() == out;
+}
+
+void DehumProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+{
+    juce::ScopedNoDenormals noDenormals;
+
+    const auto totalIn  = getTotalNumInputChannels();
+    const auto totalOut = getTotalNumOutputChannels();
+    for (int ch = totalIn; ch < totalOut; ++ch)
+        buffer.clear (ch, 0, buffer.getNumSamples());
+
+    const int n = buffer.getNumSamples();
+    meters.pushInputPeak (buffer.getMagnitude (0, n));
+
+    if (*pBypass < 0.5f)
+    {
+        dehum.setParameters (pFreq->load(), (int) (*pHarm + 0.5f), pDepth->load(), pQ->load());
+        dehum.process (buffer.getArrayOfWritePointers(), totalOut, n);
+    }
+
+    meters.pushOutputPeak (buffer.getMagnitude (0, n));
+}
+
+juce::AudioProcessorEditor* DehumProcessor::createEditor() { return new DehumEditor (*this); }
+
+int DehumProcessor::getNumPrograms() { return (int) Presets::getFactoryPresets().size(); }
+
+void DehumProcessor::setCurrentProgram (int index)
+{
+    if (index < 0 || index >= getNumPrograms()) return;
+    currentProgram = index;
+    Presets::apply (index, apvts);
+}
+
+const juce::String DehumProcessor::getProgramName (int index)
+{
+    const auto& p = Presets::getFactoryPresets();
+    return (index >= 0 && index < (int) p.size()) ? p[(size_t) index].name : juce::String{};
+}
+
+void DehumProcessor::getStateInformation (juce::MemoryBlock& dest)
+{
+    if (auto state = apvts.copyState(); state.isValid())
+    {
+        juce::MemoryOutputStream mos (dest, false);
+        state.writeToStream (mos);
+    }
+}
+
+void DehumProcessor::setStateInformation (const void* data, int size)
+{
+    auto tree = juce::ValueTree::readFromData (data, (size_t) size);
+    if (tree.isValid()) apvts.replaceState (tree);
+}
+
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new DehumProcessor(); }
