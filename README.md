@@ -57,6 +57,12 @@ Two shared foundations make the whole line feel like one product:
 | **DEHUM**   | Mains hum remover (RX branch) | ✅ v0.1 built · AU-validated |
 | **GATE**    | Noise gate / expander | ✅ v0.1 built · AU-validated |
 | **DENOISE** | Spectral noise reduction (learn profile) | ✅ v0.1 built · AU-validated |
+| **CHORUS**  | Stereo chorus (modulation) | ✅ v0.1 built · AU-validated |
+| **FLANGER** | Stereo flanger (modulation) | ✅ v0.1 built · AU-validated |
+| **PHASER**  | Analog phaser (modulation) | ✅ v0.1 built · AU-validated |
+| **TREMOLO** | Tremolo / auto-pan | ✅ v0.1 built · AU-validated |
+| **CLIPPER** | Anti-aliased clipper (ADAA) | ✅ v0.1 built · AU-validated |
+| **CRUSH**   | Bit crusher / decimator | ✅ v0.1 built · AU-validated |
 
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
 pass Apple's `auval` host validator.
