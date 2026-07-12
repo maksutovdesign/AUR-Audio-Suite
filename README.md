@@ -63,6 +63,9 @@ Two shared foundations make the whole line feel like one product:
 | **TREMOLO** | Tremolo / auto-pan | ✅ v0.1 built · AU-validated |
 | **CLIPPER** | Anti-aliased clipper (ADAA) | ✅ v0.1 built · AU-validated |
 | **CRUSH**   | Bit crusher / decimator | ✅ v0.1 built · AU-validated |
+| **TRANSIENT** | Transient shaper (attack/sustain) | ✅ v0.1 built · AU-validated |
+| **MULTI**   | 3-band compressor (LR4 crossover) | ✅ v0.1 built · AU-validated |
+| **EXCITE**  | Harmonic exciter (ADAA air band) | ✅ v0.1 built · AU-validated |
 
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
 pass Apple's `auval` host validator.
