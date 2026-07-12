@@ -176,6 +176,18 @@ def gen(cfg):
     print("generated", cfg["name"])
 
 CONFIGS = [
+ dict(name="GAIN",code="Agn1",prefix="Gain",subtitle="Gain · balance · width · M/S",includes=["GainUtil.h"],
+   members="aur::GainUtil fx;",prepare="fx.prepare(sr,getTotalNumOutputChannels());",
+   setparams='fx.setParameters(V("gain"),V("balance"),V("width"),V("mono")>0.5f,V("phase")>0.5f);',
+   process='fx.process(buffer.getArrayOfWritePointers(),tout,n);',
+   params=[dict(id="gain",name="Gain",min="-24",max="24",kind="db",step="0.01",**{"def":"0"}),
+           dict(id="balance",name="Balance",min="-1",max="1",kind="plain",step="0.01",**{"def":"0"}),
+           dict(id="width",name="Width",min="0",max="200",kind="pct",step="1",**{"def":"100"})],
+   bools=[dict(id="mono",name="Mono",**{"def":False}),dict(id="phase",name="Phase",**{"def":False})],
+   knobs=[("gain","GAIN"),("balance","BALANCE"),("width","WIDTH")],
+   presets=[("Unity",{"gain":"0","balance":"0","width":"100"}),("Trim -6",{"gain":"-6","balance":"0","width":"100"}),
+            ("Narrow",{"gain":"0","balance":"0","width":"60"}),("Wide",{"gain":"0","balance":"0","width":"150"}),
+            ("Boost +3",{"gain":"3","balance":"0","width":"100"})]),
  dict(name="TRANSIENT",code="Ats1",prefix="Transient",subtitle="Transient shaper",includes=["TransientShaper.h"],
    members="aur::TransientShaper fx;",prepare="fx.prepare(sr);",
    setparams='fx.setParameters(V("attack"),V("sustain"));',
