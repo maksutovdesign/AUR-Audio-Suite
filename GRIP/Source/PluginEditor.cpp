@@ -34,10 +34,6 @@ GripEditor::GripEditor (GripProcessor& p)
     bypassAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
         apvts, ParamID::bypass, bypassButton);
 
-    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
-    themeBox.setSelectedId (1, juce::dontSendNotification);
-    addAndMakeVisible (themeBox);
-    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
 
     addAndMakeVisible (inMeter);
     addAndMakeVisible (grMeter);
@@ -90,7 +86,6 @@ void GripEditor::resized()
     auto header = area.removeFromTop (56);
     header.removeFromLeft (230);
     bypassButton.setBounds (header.removeFromRight (92).reduced (4, 12));
-    themeBox.setBounds     (header.removeFromRight (92).reduced (4, 14));
     presetBox.setBounds    (header.removeFromRight (150).reduced (4, 14));
 
     area.removeFromTop (6);

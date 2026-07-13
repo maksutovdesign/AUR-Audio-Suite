@@ -31,8 +31,11 @@ public:
     {
         for (int n = 0; n < numSamples; ++n)
         {
-            const float m  = lfo.next();
-            const float mR = lfo.at (0.25);
+            // Unipolar modulation keeps the delay in [base, base+depth] — never
+            // negative — which is what a flanger/chorus needs (bipolar swing with
+            // depth>base would read past the write head and squeal).
+            const float m  = lfo.next()   * 0.5f + 0.5f;
+            const float mR = lfo.at (0.25) * 0.5f + 0.5f;
             const float dL = (float) ((base + depth * m)  * 0.001 * fs);
             const float dR = (float) ((base + depth * mR) * 0.001 * fs);
 

@@ -89,7 +89,7 @@ namespace aur::ui
     // ---- Current theme (mutable global; UI thread only) ----
     inline Theme& mutableTheme()
     {
-        static Theme t = moltenTheme();
+        static Theme t = obsidianTheme();   // fixed suite look (no in-plugin selector)
         return t;
     }
     inline const Theme& theme()          { return mutableTheme(); }

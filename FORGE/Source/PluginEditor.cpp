@@ -38,10 +38,6 @@ ForgeEditor::ForgeEditor (ForgeProcessor& p)
     addAndMakeVisible (bypassButton);
     bypassAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (apvts, ParamID::bypass, bypassButton);
 
-    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
-    themeBox.setSelectedId (1, juce::dontSendNotification);
-    addAndMakeVisible (themeBox);
-    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
 
     addAndMakeVisible (inMeter);
     addAndMakeVisible (grMeter);
@@ -94,7 +90,6 @@ void ForgeEditor::resized()
     auto header = area.removeFromTop (56);
     header.removeFromLeft (230);
     bypassButton.setBounds (header.removeFromRight (92).reduced (4, 12));
-    themeBox.setBounds     (header.removeFromRight (92).reduced (4, 14));
     presetBox.setBounds    (header.removeFromRight (160).reduced (4, 14));
     flavorBox.setBounds    (header.removeFromRight (100).reduced (4, 14));
 

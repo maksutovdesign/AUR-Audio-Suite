@@ -27,7 +27,7 @@ private:
     std::unique_ptr<aur::ui::LabeledKnob> depthKnob, sensKnob, sharpKnob, mixKnob;
     SpectrumView spectrum { audioProcessor.getSuppressor() };
 
-    juce::ComboBox presetBox, themeBox;
+    juce::ComboBox presetBox;
     juce::TextButton deltaButton { "DELTA" };
     juce::TextButton bypassButton { "BYPASS" };
 

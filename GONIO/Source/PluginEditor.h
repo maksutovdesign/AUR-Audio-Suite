@@ -17,6 +17,5 @@ private:
     GonioProcessor& ap;
     aur::ui::AurLookAndFeel lnf;
     Goniometer scope { ap.getL(), ap.getR() };
-    juce::ComboBox themeBox;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GonioEditor)
 };

@@ -13,10 +13,6 @@ ScopeEditor::ScopeEditor (ScopeProcessor& p)
     addAndMakeVisible (lMeter);
     addAndMakeVisible (rMeter);
 
-    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
-    themeBox.setSelectedId (1, juce::dontSendNotification);
-    addAndMakeVisible (themeBox);
-    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
 
     startTimerHz (20);
     setSize (760, 470);
@@ -91,7 +87,6 @@ void ScopeEditor::resized()
 
     auto header = area.removeFromTop (56);
     header.removeFromLeft (360);
-    themeBox.setBounds (header.removeFromRight (92).reduced (4, 14));
 
     area.removeFromTop (6);
 

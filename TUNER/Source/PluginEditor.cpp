@@ -9,10 +9,6 @@ namespace { const char* kNotes[12] = { "C","C#","D","D#","E","F","F#","G","G#","
 TunerEditor::TunerEditor (TunerProcessor& p) : AudioProcessorEditor (p), ap (p)
 {
     setLookAndFeel (&lnf);
-    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
-    themeBox.setSelectedId (1, juce::dontSendNotification);
-    addAndMakeVisible (themeBox);
-    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
     startTimerHz (20);
     setSize (460, 340);
 }
@@ -73,5 +69,4 @@ void TunerEditor::paint (juce::Graphics& g)
 void TunerEditor::resized()
 {
     auto header = getLocalBounds().reduced (18).removeFromTop (56);
-    themeBox.setBounds (header.removeFromRight (92).reduced (4, 14));
 }

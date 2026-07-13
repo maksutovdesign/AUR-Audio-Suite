@@ -25,7 +25,7 @@ private:
 
     std::unique_ptr<aur::ui::LabeledKnob> timeK, fbK, dampK, widthK, mixK;
 
-    juce::ComboBox presetBox, themeBox;
+    juce::ComboBox presetBox;
     juce::TextButton pingButton { "PING-PONG" };
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> pingAttachment, bypassAttachment;

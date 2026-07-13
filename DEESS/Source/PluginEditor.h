@@ -25,7 +25,7 @@ private:
 
     std::unique_ptr<aur::ui::LabeledKnob> freqK, thrK, rangeK;
 
-    juce::ComboBox presetBox, themeBox;
+    juce::ComboBox presetBox;
     juce::TextButton listenButton { "LISTEN" };
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> listenAtt, bypassAtt;

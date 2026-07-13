@@ -24,6 +24,9 @@ struct FractionalDelay
     float read (float delaySamples) const
     {
         const int sz = (int) buf.size();
+        // Clamp so we always read behind the write head (never negative delay).
+        if (delaySamples < 1.0f) delaySamples = 1.0f;
+        if (delaySamples > (float) (sz - 2)) delaySamples = (float) (sz - 2);
         float rp = (float) widx - 1.0f - delaySamples;
         while (rp < 0.0f) rp += (float) sz;
         const int i0 = (int) rp;

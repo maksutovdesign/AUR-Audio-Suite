@@ -39,10 +39,6 @@ EmberEditor::EmberEditor (EmberProcessor& p)
         apvts, ParamID::bypass, bypassButton);
 
     // Live theme switch — proves the shared AurvedaUI design system.
-    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
-    themeBox.setSelectedId (1, juce::dontSendNotification);
-    addAndMakeVisible (themeBox);
-    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
 
     addAndMakeVisible (spectrum);
     addAndMakeVisible (inMeter);
@@ -97,7 +93,6 @@ void EmberEditor::resized()
     auto header = area.removeFromTop (56);
     header.removeFromLeft (230);
     bypassButton.setBounds (header.removeFromRight (96).reduced (4, 12));
-    themeBox.setBounds     (header.removeFromRight (96).reduced (4, 14));
     presetBox.setBounds    (header.removeFromRight (150).reduced (4, 14));
     flavorBox.setBounds    (header.removeFromRight (104).reduced (4, 14));
 

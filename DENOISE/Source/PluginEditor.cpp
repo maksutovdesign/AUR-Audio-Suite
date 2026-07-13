@@ -25,10 +25,6 @@ DenoiseEditor::DenoiseEditor (DenoiseProcessor& p)
     addAndMakeVisible (bypassButton);
     bypassAtt = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (apvts, ParamID::bypass, bypassButton);
 
-    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
-    themeBox.setSelectedId (1, juce::dontSendNotification);
-    addAndMakeVisible (themeBox);
-    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
 
     startTimerHz (12);
     setSize (720, 460);
@@ -71,7 +67,6 @@ void DenoiseEditor::resized()
     auto header = area.removeFromTop (56);
     header.removeFromLeft (220);
     bypassButton.setBounds (header.removeFromRight (92).reduced (4, 12));
-    themeBox.setBounds     (header.removeFromRight (92).reduced (4, 14));
 
     area.removeFromTop (6);
     spectrum.setBounds (area.removeFromTop (210));

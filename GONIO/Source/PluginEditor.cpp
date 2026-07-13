@@ -7,10 +7,6 @@ GonioEditor::GonioEditor (GonioProcessor& p) : AudioProcessorEditor (p), ap (p)
 {
     setLookAndFeel (&lnf);
     addAndMakeVisible (scope);
-    themeBox.addItemList ({ "Molten", "Obsidian", "Flux" }, 1);
-    themeBox.setSelectedId (1, juce::dontSendNotification);
-    addAndMakeVisible (themeBox);
-    themeBox.onChange = [this] { applyThemeChoice (themeBox.getSelectedId() - 1); };
     setSize (460, 520);
 }
 GonioEditor::~GonioEditor() { setLookAndFeel (nullptr); }
@@ -32,7 +28,6 @@ void GonioEditor::resized()
 {
     auto area = getLocalBounds().reduced (18);
     auto header = area.removeFromTop (56);
-    themeBox.setBounds (header.removeFromRight (92).reduced (4, 14));
     area.removeFromTop (6);
     scope.setBounds (area);
 }

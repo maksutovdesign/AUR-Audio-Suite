@@ -26,7 +26,7 @@ private:
     std::unique_ptr<aur::ui::LabeledKnob> hpK, lsFK, lsGK, bFK, bGK, bQK, hsFK, hsGK, lpK;
     std::unique_ptr<EqDisplay> display;
 
-    juce::ComboBox presetBox, themeBox;
+    juce::ComboBox presetBox;
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassAttachment;
 

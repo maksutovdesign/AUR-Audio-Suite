@@ -27,7 +27,7 @@ private:
     aur::ui::SpectrumAnalyzer spectrum { audioProcessor.getAnalyzer() };
     std::unique_ptr<aur::ui::LabeledKnob> charK, inputK, hpfK, toneK, outputK;
 
-    juce::ComboBox flavorBox, presetBox, themeBox;
+    juce::ComboBox flavorBox, presetBox;
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> flavorAtt;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   bypassAtt;

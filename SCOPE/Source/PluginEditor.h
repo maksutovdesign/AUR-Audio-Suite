@@ -28,7 +28,6 @@ private:
     aur::ui::MeterComponent lMeter { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::input,  "L" };
     aur::ui::MeterComponent rMeter { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::output, "R" };
 
-    juce::ComboBox themeBox;
 
     juce::Rectangle<int> lufsArea, corrArea;
 

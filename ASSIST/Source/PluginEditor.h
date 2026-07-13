@@ -28,7 +28,6 @@ private:
     std::unique_ptr<aur::ui::LabeledKnob> intensityK, ceilingK;
 
     juce::TextButton assistButton { "ASSIST" };
-    juce::ComboBox targetBox, toneBox, themeBox;
     juce::TextButton bypassButton { "BYPASS" };
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> targetAtt, toneAtt;

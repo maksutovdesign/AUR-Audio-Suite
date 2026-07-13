@@ -26,7 +26,7 @@ private:
     std::unique_ptr<aur::ui::LabeledKnob> driveKnob, inputKnob, mixKnob, toneKnob, outputKnob;
     aur::ui::SpectrumAnalyzer spectrum { audioProcessor.getAnalyzer() };
 
-    juce::ComboBox flavorBox, presetBox, themeBox;
+    juce::ComboBox flavorBox, presetBox;
     juce::TextButton bypassButton { "BYPASS" };
 
     void applyThemeChoice (int index);

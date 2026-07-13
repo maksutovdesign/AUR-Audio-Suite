@@ -26,7 +26,7 @@ private:
 
     std::unique_ptr<aur::ui::LabeledKnob> widthK, monoK, balK;
 
-    juce::ComboBox presetBox, themeBox;
+    juce::ComboBox presetBox;
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassAttachment;
 

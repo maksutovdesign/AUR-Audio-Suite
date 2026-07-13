@@ -16,6 +16,5 @@ private:
     void applyThemeChoice (int);
     TunerProcessor& ap;
     aur::ui::AurLookAndFeel lnf;
-    juce::ComboBox themeBox;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TunerEditor)
 };

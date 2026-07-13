@@ -14,7 +14,7 @@ private:
   std::array<std::unique_ptr<aur::ui::LabeledKnob>,4> knobs;
   std::vector<std::unique_ptr<juce::TextButton>> toggleBtns;
   std::vector<std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>> toggleAtt;
-  juce::ComboBox presetBox, themeBox; juce::TextButton bypassButton{"BYPASS"};
+  juce::ComboBox presetBox; juce::TextButton bypassButton{"BYPASS"};
   std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassAtt;
   aur::ui::MeterComponent inMeter{ap.getMeterState(),aur::ui::MeterComponent::Which::input,"IN"};
   aur::ui::MeterComponent outMeter{ap.getMeterState(),aur::ui::MeterComponent::Which::output,"OUT"};

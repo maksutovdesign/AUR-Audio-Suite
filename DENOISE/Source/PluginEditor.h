@@ -28,7 +28,6 @@ private:
     std::unique_ptr<aur::ui::LabeledKnob> amountK, sensK;
 
     juce::TextButton learnButton { "LEARN NOISE" };
-    juce::ComboBox themeBox;
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassAtt;
 
