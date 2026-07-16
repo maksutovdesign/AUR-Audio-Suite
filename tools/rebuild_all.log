@@ -1,43 +1,52 @@
--- Configuring juceaide
--- Building juceaide
--- Exporting juceaide
--- Testing juceaide
--- Finished setting up juceaide
--- Configuring done (38.0s)
--- Generating done (0.0s)
--- Build files have been written to: /Users/maksutovdesign/Desktop/Github/AUR/EMBER/build
-[  2%] Building CXX object CMakeFiles/juce_vst3_helper.dir/_deps/juce-src/modules/juce_audio_plugin_client/VST3/juce_VST3ManifestHelper.mm.o
-[  5%] Linking CXX executable juce_vst3_helper
 [  5%] Built target juce_vst3_helper
-[  7%] Building CXX object CMakeFiles/EMBER.dir/Source/PluginProcessor.cpp.o
-[ 10%] Building CXX object CMakeFiles/EMBER.dir/Source/PluginEditor.cpp.o
-[ 12%] Building CXX object CMakeFiles/EMBER.dir/Source/Presets.cpp.o
-[ 15%] Building CXX object CMakeFiles/EMBER.dir/Users/maksutovdesign/Desktop/Github/AUR/AurvedaUI/AurLookAndFeel.cpp.o
-[ 17%] Building CXX object CMakeFiles/EMBER.dir/Users/maksutovdesign/Desktop/Github/AUR/AurvedaUI/MeterComponent.cpp.o
-[ 20%] Building CXX object CMakeFiles/EMBER.dir/Users/maksutovdesign/Desktop/Github/AUR/AurvedaUI/SpectrumAnalyzer.cpp.o
-[ 22%] Building CXX object CMakeFiles/EMBER.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_ara.cpp.o
-[ 25%] Building CXX object CMakeFiles/EMBER.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_lv2_libs.cpp.o
-[ 27%] Building CXX object CMakeFiles/EMBER.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o
-[ 30%] Building CXX object CMakeFiles/EMBER.dir/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o
-[ 32%] Building CXX object CMakeFiles/EMBER.dir/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o
-In file included from /Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm:35:
-/Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.cpp:61:2: warning: This version of JUCE does not use the splash screen, the flag JUCE_DISPLAY_SPLASH_SCREEN is ignored [-W#pragma-messages]
-   61 |  JUCE_COMPILER_WARNING ("This version of JUCE does not use the splash screen, the flag JUCE_DISPLAY_SPLASH_SCREEN is ignored")
-      |  ^
-/Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_core/system/juce_PlatformDefs.h:286:38: note: expanded from macro 'JUCE_COMPILER_WARNING'
-  286 |  #define JUCE_COMPILER_WARNING(msg)  _Pragma (JUCE_STRINGIFY (message (msg)))
-      |                                      ^
-<scratch space>:240:2: note: expanded from here
-  240 |  message ("This version of JUCE does not use the splash screen, the flag JUCE_DISPLAY_SPLASH_SCREEN is ignored")
-      |  ^
-In file included from /Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm:35:
-In file included from /Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.cpp:187:
-/Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_gui_basics/native/juce_NSViewComponentPeer_mac.mm:1636:23: warning: variable 'target' set but not used [-Wunused-but-set-variable]
- 1636 |             if (auto* target = findCurrentTextInputTarget())
-      |                       ^
-/Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_gui_basics/native/juce_NSViewComponentPeer_mac.mm:1900:17: warning: enumeration value 'NSEventTypeMouseCancelled' not explicitly handled in switch [-Wswitch-enum]
- 1900 |         switch ([e type])
-      |                 ^~~~~~~~
-/Users/maksutovdesign/Desktop/Github/AUR/EMBER/build/_deps/juce-src/modules/juce_gui_basics/native/juce_NSViewComponentPeer_mac.mm:1900:17: note: add missing switch cases
- 1900 |         switch ([e type])
-      |                 ^
+[ 67%] Built target EMBER
+[100%] Built target EMBER_VST3
+[ 65%] Built target EMBER
+[100%] Built target EMBER_AU
+[  5%] Built target juce_vst3_helper
+[ 66%] Built target CLARITY
+[100%] Built target CLARITY_VST3
+[ 64%] Built target CLARITY
+[100%] Built target CLARITY_AU
+[  5%] Built target juce_vst3_helper
+[ 66%] Built target GRIP
+[100%] Built target GRIP_VST3
+[ 64%] Built target GRIP
+[100%] Built target GRIP_AU
+[  5%] Built target juce_vst3_helper
+[ 66%] Built target CEIL
+[100%] Built target CEIL_VST3
+[ 64%] Built target CEIL
+[100%] Built target CEIL_AU
+[  5%] Built target juce_vst3_helper
+[ 67%] Built target PRISM
+[100%] Built target PRISM_VST3
+[ 65%] Built target PRISM
+[100%] Built target PRISM_AU
+[  5%] Built target juce_vst3_helper
+[ 66%] Built target HAZE
+[100%] Built target HAZE_VST3
+[ 64%] Built target HAZE
+[100%] Built target HAZE_AU
+[  5%] Built target juce_vst3_helper
+[ 66%] Built target SCOPE
+[100%] Built target SCOPE_VST3
+[ 64%] Built target SCOPE
+[100%] Built target SCOPE_AU
+[  5%] Built target juce_vst3_helper
+[ 66%] Built target IMAGER
+[100%] Built target IMAGER_VST3
+[ 64%] Built target IMAGER
+[100%] Built target IMAGER_AU
+[  5%] Built target juce_vst3_helper
+[ 66%] Built target DELAY
+[100%] Built target DELAY_VST3
+[ 64%] Built target DELAY
+[100%] Built target DELAY_AU
+[  5%] Built target juce_vst3_helper
+[ 67%] Built target MOTION
+[100%] Built target MOTION_VST3
+[ 65%] Built target MOTION
+[100%] Built target MOTION_AU
+[  5%] Built target juce_vst3_helper
+[  7%] Building CXX object CMakeFiles/ASSIST.dir/Source/PluginProcessor.cpp.o

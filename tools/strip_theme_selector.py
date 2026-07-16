@@ -16,6 +16,11 @@ def strip(path):
                 ln = ln.replace('presetBox, themeBox', 'presetBox')            # decl
                 ln = ln.replace(', themeBox', '')
                 out.append(ln)
+            elif 'ComboBox' in ln:
+                # declaration line sharing themeBox with other combo boxes
+                ln = ln.replace(', themeBox', '').replace('themeBox, ', '').replace(' themeBox;', ';')
+                if 'themeBox' in ln: continue   # was themeBox-only
+                out.append(ln)
             else:
                 # themeBox-only line → drop it entirely
                 continue

@@ -29,6 +29,7 @@ private:
 
     juce::TextButton assistButton { "ASSIST" };
     juce::TextButton bypassButton { "BYPASS" };
+    juce::ComboBox targetBox, toneBox;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> targetAtt, toneAtt;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>   bypassAtt;
