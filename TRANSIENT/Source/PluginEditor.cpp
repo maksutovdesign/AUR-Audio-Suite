@@ -14,7 +14,6 @@ TransientEditor::TransientEditor(TransientProcessor& p):AudioProcessorEditor(p),
   setSize(430,400);
 }
 TransientEditor::~TransientEditor(){ setLookAndFeel(nullptr);}
-void TransientEditor::applyThemeChoice(int i){ switch(i){case 1: aur::ui::setTheme(aur::ui::obsidianTheme());break; case 2: aur::ui::setTheme(aur::ui::fluxTheme());break; default: aur::ui::setTheme(aur::ui::moltenTheme());} lnf.applyTheme(); sendLookAndFeelChange(); repaint(); }
 void TransientEditor::refreshPresetBox(){ presetBox.clear(juce::dontSendNotification); int id=1; for(const auto& pr:Presets::getFactoryPresets()) presetBox.addItem(pr.name,id++); presetBox.setSelectedId(ap.getCurrentProgram()+1,juce::dontSendNotification);}
 void TransientEditor::paint(juce::Graphics& g){ const auto& t=theme(); g.fillAll(t.ground);
   const auto cx=(float)getWidth()*0.5f; juce::ColourGradient gl(t.accent.withAlpha(0.12f),cx,150.0f,t.ground.withAlpha(0.0f),cx,320.0f,true); g.setGradientFill(gl); g.fillRect(getLocalBounds());

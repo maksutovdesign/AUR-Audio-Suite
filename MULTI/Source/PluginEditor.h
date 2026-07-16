@@ -9,7 +9,7 @@ public:
   explicit MultiEditor(MultiProcessor&); ~MultiEditor() override;
   void paint(juce::Graphics&) override; void resized() override;
 private:
-  void refreshPresetBox(); void applyThemeChoice(int);
+  void refreshPresetBox();
   MultiProcessor& ap; aur::ui::AurLookAndFeel lnf;
   std::array<std::unique_ptr<aur::ui::LabeledKnob>,8> knobs;
   std::vector<std::unique_ptr<juce::TextButton>> toggleBtns;

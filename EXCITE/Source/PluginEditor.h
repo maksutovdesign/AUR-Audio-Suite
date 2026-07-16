@@ -9,7 +9,7 @@ public:
   explicit ExciteEditor(ExciteProcessor&); ~ExciteEditor() override;
   void paint(juce::Graphics&) override; void resized() override;
 private:
-  void refreshPresetBox(); void applyThemeChoice(int);
+  void refreshPresetBox();
   ExciteProcessor& ap; aur::ui::AurLookAndFeel lnf;
   std::array<std::unique_ptr<aur::ui::LabeledKnob>,3> knobs;
   std::vector<std::unique_ptr<juce::TextButton>> toggleBtns;

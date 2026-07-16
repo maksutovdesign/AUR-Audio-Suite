@@ -173,6 +173,16 @@ def gen(cfg):
     print("generated", cfg["name"])
 
 CONFIGS = [
+ dict(name="PITCH",code="Apt1",prefix="Pitch",subtitle="Pitch shifter",includes=["PitchShifter.h"],
+   members="aur::PitchShifter fx;",prepare="fx.prepare(sr,getTotalNumOutputChannels());",
+   setparams='fx.setParameters(V("pitch"),V("mix"));',
+   process='fx.process(buffer.getArrayOfWritePointers(),tout,n);',
+   params=[dict(id="pitch",name="Pitch",min="-24",max="24",kind="plain",step="0.1",**{"def":"0"}),
+           dict(id="mix",name="Mix",min="0",max="100",kind="pct",step="0.1",**{"def":"100"})],
+   knobs=[("pitch","PITCH"),("mix","MIX")],
+   presets=[("Unison",{"pitch":"0","mix":"100"}),("Octave Up",{"pitch":"12","mix":"100"}),
+            ("Octave Down",{"pitch":"-12","mix":"100"}),("Fifth",{"pitch":"7","mix":"100"}),
+            ("Detune",{"pitch":"0.2","mix":"50"})]),
  dict(name="GAIN",code="Agn1",prefix="Gain",subtitle="Gain · balance · width · M/S",includes=["GainUtil.h"],
    members="aur::GainUtil fx;",prepare="fx.prepare(sr,getTotalNumOutputChannels());",
    setparams='fx.setParameters(V("gain"),V("balance"),V("width"),V("mono")>0.5f,V("phase")>0.5f);',

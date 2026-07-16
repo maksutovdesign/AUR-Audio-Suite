@@ -9,7 +9,7 @@ public:
   explicit TransientEditor(TransientProcessor&); ~TransientEditor() override;
   void paint(juce::Graphics&) override; void resized() override;
 private:
-  void refreshPresetBox(); void applyThemeChoice(int);
+  void refreshPresetBox();
   TransientProcessor& ap; aur::ui::AurLookAndFeel lnf;
   std::array<std::unique_ptr<aur::ui::LabeledKnob>,2> knobs;
   std::vector<std::unique_ptr<juce::TextButton>> toggleBtns;
