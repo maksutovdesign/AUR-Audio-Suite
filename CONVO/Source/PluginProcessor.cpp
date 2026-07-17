@@ -27,14 +27,24 @@ void ConvoProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
                                   (juce::uint32) numChannels };
     conv.prepare (spec);
 
+    predelay.setMaximumDelayInSamples ((int) std::ceil (0.16 * sampleRate) + 4);
+    predelay.prepare (spec);
+    predelay.reset();
+
     wetBuffer.setSize (numChannels, samplesPerBlock);
     dryBuffer.setSize (numChannels, samplesPerBlock);
     mixSmooth.reset (sampleRate, 0.02);
     setLatencySamples (0);
 
-    // Force a rebuild for the current parameter values.
-    lastDecay = lastTone = lastPredelay = lastWidth = -1.f;
-    rebuildImpulseResponse();
+    // Restore whatever IR source the saved state asked for.
+    const auto savedPath = apvts.state.getProperty (kIRPathProp).toString();
+    if (savedPath.isNotEmpty() && juce::File (savedPath).existsAsFile())
+        loadImpulseFile (juce::File (savedPath));
+    else
+    {
+        lastDecay = lastTone = lastWidth = -1.f;   // force a rebuild
+        rebuildSyntheticIR();
+    }
 }
 
 bool ConvoProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -45,21 +55,18 @@ bool ConvoProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
     return layouts.getMainInputChannelSet() == out;
 }
 
-void ConvoProcessor::rebuildImpulseResponse()
+void ConvoProcessor::rebuildSyntheticIR()
 {
     const double sr       = currentSampleRate;
     const float  decaySec = pDecay->load();
     const float  tone     = pTone->load()  * 0.01f;   // 0..1
-    const float  preMs    = pPredelay->load();
     const float  width    = pWidth->load() * 0.01f;   // 0..1
 
-    lastDecay = decaySec; lastTone = tone; lastPredelay = preMs; lastWidth = width;
+    lastDecay = decaySec; lastTone = tone; lastWidth = width;
 
-    const int preSamples  = juce::jmax (0, (int) std::round (preMs * 0.001 * sr));
     const int tailSamples = juce::jmax (16, (int) std::round (decaySec * sr));
-    const int total       = preSamples + tailSamples;
 
-    juce::AudioBuffer<float> ir (2, total);
+    juce::AudioBuffer<float> ir (2, tailSamples);
     ir.clear();
 
     // Tone → one-pole lowpass cutoff. Darker (low tone) damps highs harder.
@@ -82,9 +89,8 @@ void ConvoProcessor::rebuildImpulseResponse()
         const float nR = rngR.nextFloat() * 2.0f - 1.0f;
         lpL += lpCoef * (nL - lpL);
         lpR += lpCoef * (nR - lpR);
-        const int idx = preSamples + i;
-        wL[idx] = lpL * env;
-        wR[idx] = (lpR * width + lpL * (1.0f - width)) * env;
+        wL[i] = lpL * env;
+        wR[i] = (lpR * width + lpL * (1.0f - width)) * env;
     }
 
     // Normalise to unity energy so loudness stays consistent as Decay/Tone move;
@@ -93,7 +99,7 @@ void ConvoProcessor::rebuildImpulseResponse()
     for (int c = 0; c < 2; ++c)
     {
         const auto* r = ir.getReadPointer (c);
-        for (int i = 0; i < total; ++i) e += (double) r[i] * r[i];
+        for (int i = 0; i < tailSamples; ++i) e += (double) r[i] * r[i];
     }
     const float norm = e > 1.0e-9 ? (float) (1.0 / std::sqrt (e)) : 1.0f;
     ir.applyGain (norm);
@@ -102,9 +108,40 @@ void ConvoProcessor::rebuildImpulseResponse()
                               juce::dsp::Convolution::Stereo::yes,
                               juce::dsp::Convolution::Trim::no,
                               juce::dsp::Convolution::Normalise::no);
+    usingFile.store (false);
 }
 
-void ConvoProcessor::handleAsyncUpdate() { rebuildImpulseResponse(); }
+void ConvoProcessor::loadImpulseFile (const juce::File& file)
+{
+    if (! file.existsAsFile()) return;
+
+    conv.loadImpulseResponse (file,
+                              juce::dsp::Convolution::Stereo::yes,
+                              juce::dsp::Convolution::Trim::yes,
+                              0,                                     // load whole file
+                              juce::dsp::Convolution::Normalise::yes);
+    usingFile.store (true);
+    apvts.state.setProperty (kIRPathProp, file.getFullPathName(), nullptr);
+}
+
+void ConvoProcessor::useSyntheticIR()
+{
+    apvts.state.setProperty (kIRPathProp, "", nullptr);
+    lastDecay = lastTone = lastWidth = -1.f;   // force a rebuild
+    rebuildSyntheticIR();
+}
+
+juce::String ConvoProcessor::getIRSourceName() const
+{
+    if (usingFile.load())
+    {
+        const auto p = apvts.state.getProperty (kIRPathProp).toString();
+        return p.isNotEmpty() ? juce::File (p).getFileName() : juce::String ("File");
+    }
+    return "Synthetic";
+}
+
+void ConvoProcessor::handleAsyncUpdate() { rebuildSyntheticIR(); }
 
 void ConvoProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
 {
@@ -118,17 +155,20 @@ void ConvoProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiB
 
     meters.pushInputPeak (buffer.getMagnitude (0, n));
 
-    // Ask for an IR rebuild (message thread) if any shaping value moved.
-    const float eps = 1.0e-4f;
-    if (std::abs (pDecay->load()          - lastDecay)    > eps
-        || std::abs (pTone->load() * 0.01f - lastTone)    > eps
-        || std::abs (pPredelay->load()     - lastPredelay) > eps
-        || std::abs (pWidth->load() * 0.01f - lastWidth)  > eps)
+    // Ask for a synthetic-IR rebuild (message thread) if a shaping value moved —
+    // but only while the synthetic source is active (never clobber a loaded file).
+    if (! usingFile.load())
     {
-        // Latch immediately so we don't re-trigger every block while pending.
-        lastDecay = pDecay->load(); lastTone = pTone->load() * 0.01f;
-        lastPredelay = pPredelay->load(); lastWidth = pWidth->load() * 0.01f;
-        triggerAsyncUpdate();
+        const float eps = 1.0e-4f;
+        if (std::abs (pDecay->load()           - lastDecay) > eps
+            || std::abs (pTone->load()  * 0.01f - lastTone) > eps
+            || std::abs (pWidth->load() * 0.01f - lastWidth) > eps)
+        {
+            lastDecay = pDecay->load();
+            lastTone  = pTone->load()  * 0.01f;
+            lastWidth = pWidth->load() * 0.01f;
+            triggerAsyncUpdate();
+        }
     }
 
     const bool bypassed = *pBypass > 0.5f;
@@ -136,11 +176,24 @@ void ConvoProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiB
 
     dryBuffer.makeCopyOf (buffer, true);
 
-    // Wet path: run a copy through the convolver.
+    // Wet path: convolve a copy, then apply the pre-delay line.
     wetBuffer.makeCopyOf (buffer, true);
     juce::dsp::AudioBlock<float> block (wetBuffer);
     juce::dsp::ProcessContextReplacing<float> ctx (block);
     conv.process (ctx);
+
+    const float preSamples = juce::jlimit (0.0f, (float) predelay.getMaximumDelayInSamples() - 1.0f,
+                                           pPredelay->load() * 0.001f * (float) currentSampleRate);
+    predelay.setDelay (preSamples);
+    for (int ch = 0; ch < totalOut; ++ch)
+    {
+        auto* w = wetBuffer.getWritePointer (juce::jmin (ch, wetBuffer.getNumChannels() - 1));
+        for (int s = 0; s < n; ++s)
+        {
+            predelay.pushSample (ch, w[s]);
+            w[s] = predelay.popSample (ch);
+        }
+    }
 
     for (int s = 0; s < n; ++s)
     {
@@ -187,7 +240,14 @@ void ConvoProcessor::getStateInformation (juce::MemoryBlock& dest)
 void ConvoProcessor::setStateInformation (const void* data, int size)
 {
     auto tree = juce::ValueTree::readFromData (data, (size_t) size);
-    if (tree.isValid()) apvts.replaceState (tree);
+    if (! tree.isValid()) return;
+    apvts.replaceState (tree);
+
+    const auto path = apvts.state.getProperty (kIRPathProp).toString();
+    if (path.isNotEmpty() && juce::File (path).existsAsFile())
+        loadImpulseFile (juce::File (path));
+    else
+        useSyntheticIR();
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new ConvoProcessor(); }

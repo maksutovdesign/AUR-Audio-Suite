@@ -30,6 +30,11 @@ private:
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassAttachment;
 
+    juce::TextButton loadButton  { "LOAD IR…" };
+    juce::TextButton synthButton { "SYNTH" };
+    std::unique_ptr<juce::FileChooser> chooser;
+    juce::Rectangle<int> irStrip;
+
     aur::ui::MeterComponent inMeter  { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::input,  "IN" };
     aur::ui::MeterComponent outMeter { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::output, "OUT" };
 

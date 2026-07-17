@@ -8,11 +8,15 @@
 #include "Metering.h"
 
 /** AUR CONVO — convolution reverb.
-    Builds a synthetic impulse response (exponentially-decaying, tone-shaped,
-    stereo-decorrelated noise) and convolves the signal through JUCE's
-    zero-latency uniformly-partitioned convolution engine. The IR is rebuilt on
-    the message thread (via AsyncUpdater) whenever a shaping parameter changes,
-    so the audio thread never allocates. */
+
+    Two IR sources:
+      • SYNTHETIC (default) — an exponentially-decaying, tone-shaped,
+        stereo-decorrelated noise IR built from the Decay / Tone / Width knobs.
+      • FILE — any WAV/AIFF impulse response the user loads.
+
+    Pre-Delay is a real delay line on the wet path, so it works for both
+    sources. The synthetic IR is rebuilt on the message thread (AsyncUpdater)
+    whenever a shaping parameter changes, so the audio thread never allocates. */
 class ConvoProcessor : public juce::AudioProcessor,
                        private juce::AsyncUpdater
 {
@@ -32,7 +36,7 @@ public:
     bool acceptsMidi() const override  { return false; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthSeconds() const override { return 7.0; }
+    double getTailLengthSeconds() const override { return 8.0; }
 
     int getNumPrograms() override;
     int getCurrentProgram() override { return currentProgram; }
@@ -46,9 +50,15 @@ public:
     juce::AudioProcessorValueTreeState& getAPVTS() { return apvts; }
     aur::MeterState& getMeterState() { return meters; }
 
+    // --- IR source control (called from the editor / message thread) ---
+    void loadImpulseFile (const juce::File&);
+    void useSyntheticIR();
+    bool isUsingFile() const { return usingFile.load(); }
+    juce::String getIRSourceName() const;
+
 private:
-    void handleAsyncUpdate() override;   // rebuilds the IR off the audio thread
-    void rebuildImpulseResponse();
+    void handleAsyncUpdate() override;   // rebuilds the synthetic IR off the audio thread
+    void rebuildSyntheticIR();
 
     juce::AudioProcessorValueTreeState apvts;
 
@@ -60,17 +70,22 @@ private:
     std::atomic<float>* pBypass   = nullptr;
 
     juce::dsp::Convolution conv { juce::dsp::Convolution::Latency { 0 } };
+    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::None> predelay { 8192 };
     double currentSampleRate = 44100.0;
     int    numChannels       = 2;
 
+    std::atomic<bool> usingFile { false };
+
     // Cached shaping values so processBlock only asks for a rebuild on change.
-    float lastDecay = -1.f, lastTone = -1.f, lastPredelay = -1.f, lastWidth = -1.f;
+    float lastDecay = -1.f, lastTone = -1.f, lastWidth = -1.f;
 
     juce::AudioBuffer<float> wetBuffer, dryBuffer;
     juce::SmoothedValue<float> mixSmooth { 0.35f };
     aur::MeterState meters;
 
     int currentProgram = 0;
+
+    static constexpr const char* kIRPathProp = "irFilePath";
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConvoProcessor)
 };

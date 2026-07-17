@@ -33,11 +33,28 @@ ConvoEditor::ConvoEditor (ConvoProcessor& p)
     bypassAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
         apvts, ParamID::bypass, bypassButton);
 
+    addAndMakeVisible (loadButton);
+    loadButton.onClick = [this]
+    {
+        chooser = std::make_unique<juce::FileChooser> (
+            "Load an impulse response", juce::File{}, "*.wav;*.aif;*.aiff;*.flac");
+        const auto flags = juce::FileBrowserComponent::openMode
+                         | juce::FileBrowserComponent::canSelectFiles;
+        chooser->launchAsync (flags, [this] (const juce::FileChooser& fc)
+        {
+            const auto f = fc.getResult();
+            if (f.existsAsFile()) audioProcessor.loadImpulseFile (f);
+        });
+    };
+
+    addAndMakeVisible (synthButton);
+    synthButton.onClick = [this] { audioProcessor.useSyntheticIR(); };
+
     addAndMakeVisible (inMeter);
     addAndMakeVisible (outMeter);
 
     startTimerHz (15);
-    setSize (720, 440);
+    setSize (720, 470);
 }
 
 ConvoEditor::~ConvoEditor() { stopTimer(); setLookAndFeel (nullptr); }
@@ -61,7 +78,18 @@ void ConvoEditor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "CONVO", "Convolution reverb · synthetic IR");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "CONVO", "Convolution reverb · IR");
+
+    // IR source readout panel.
+    g.setColour (t.panel);
+    g.fillRoundedRectangle (irStrip.toFloat(), t.cornerRadius);
+    auto r = irStrip.reduced (12, 0);
+    g.setColour (t.inkDim);
+    g.setFont (monoFont (t.fsCaption, true));
+    g.drawText ("IR SOURCE", r.removeFromTop (irStrip.getHeight() / 2), juce::Justification::centredLeft);
+    g.setColour (audioProcessor.isUsingFile() ? t.precisionBright : t.ink);
+    g.setFont (monoFont (15.0f, true));
+    g.drawText (audioProcessor.getIRSourceName(), r, juce::Justification::centredLeft);
 }
 
 void ConvoEditor::resized()
@@ -82,6 +110,14 @@ void ConvoEditor::resized()
     outMeter.setBounds (mi.reduced (4));
 
     area.removeFromRight (8);
+
+    // IR-source strip along the bottom: readout panel + Load / Synth buttons.
+    auto strip = area.removeFromBottom (44);
+    synthButton.setBounds (strip.removeFromRight (90).reduced (4, 6));
+    loadButton.setBounds  (strip.removeFromRight (110).reduced (4, 6));
+    strip.removeFromRight (8);
+    irStrip = strip;
+    area.removeFromBottom (10);
 
     // Hero knob (DECAY) on top, the four shaping knobs in a row below.
     auto top = area.removeFromTop (juce::jmin (190, area.getHeight() - 140));
