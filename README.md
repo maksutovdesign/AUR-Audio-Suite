@@ -70,6 +70,7 @@ Two shared foundations make the whole line feel like one product:
 | **GONIO**   | Stereo vectorscope (goniometer) | ✅ v0.1 built · AU-validated |
 | **TUNER**   | Chromatic tuner (autocorrelation) | ✅ v0.1 built · AU-validated |
 | **PITCH**   | Pitch shifter (±24 st, delay-line) | ✅ v0.1 built · AU-validated |
+| **CONVO**   | Convolution reverb (synthetic IR) | ✅ v0.1 built · AU-validated |
 
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
 pass Apple's `auval` host validator.
