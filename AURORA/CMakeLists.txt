@@ -15,7 +15,7 @@ juce_add_plugin(AURORA
     FORMATS AU VST3 Standalone
     IS_SYNTH TRUE NEEDS_MIDI_INPUT TRUE
     AU_MAIN_TYPE kAudioUnitType_MusicDevice
-    PRODUCT_NAME "AUR AURORA")
+    PRODUCT_NAME "AUR AURORA" COPY_PLUGIN_AFTER_BUILD TRUE)
 juce_generate_juce_header(AURORA)
 target_sources(AURORA PRIVATE
     Source/PluginProcessor.cpp Source/PluginEditor.cpp Source/Presets.cpp
