@@ -99,6 +99,8 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 | **STRING** | String ensemble (Solina-style) — 3-saw layers + BBD-style ensemble chorus | ✅ v0.1 built · AU-validated (`aumu`) |
 | **RES** | Comb resonator — noise exciter → tuned waveguide loop (bowed/blown/plucked) | ✅ v0.1 built · AU-validated (`aumu`) |
 | **KIT8** | Melodic 808 kick/bass — pitch sweep, click, long tail, glide | ✅ v0.1 built · AU-validated (`aumu`) |
+| **KIT9** | 909-style drum machine — saturated sweep kick, bright snare, metal+noise hats | ✅ v0.1 built · AU-validated (`aumu`) |
+| **FMPERC** | FM percussion kit — 7 pads of 2-op FM hits with per-pad character | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
