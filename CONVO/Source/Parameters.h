@@ -4,6 +4,7 @@
 
 namespace ParamID
 {
+    static constexpr auto character = "character"; // synthetic IR type
     static constexpr auto decay    = "decay";     // reverb tail length (s)
     static constexpr auto tone     = "tone";      // IR brightness / damping (%)
     static constexpr auto predelay = "predelay";  // ms of silence before the tail
@@ -19,6 +20,10 @@ namespace Params
         using namespace juce;
         std::vector<std::unique_ptr<RangedAudioParameter>> p;
         auto pct = [](float v,int){ return String ((int) v) + " %"; };
+
+        p.push_back (std::make_unique<AudioParameterChoice> (
+            ParameterID { ParamID::character, 1 }, "Character",
+            StringArray { "Smooth", "Room", "Plate", "Hall", "Spring" }, 0));
 
         p.push_back (std::make_unique<AudioParameterFloat> (
             ParameterID { ParamID::decay, 1 }, "Decay",

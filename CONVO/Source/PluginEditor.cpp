@@ -28,6 +28,12 @@ ConvoEditor::ConvoEditor (ConvoProcessor& p)
         if (idx >= 0) audioProcessor.setCurrentProgram (idx);
     };
 
+    addAndMakeVisible (charBox);
+    charAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (
+        apvts, ParamID::character, charBox);
+    // The character shapes the synthetic IR; leaving file mode is implicit on change.
+    charBox.onChange = [this] { if (audioProcessor.isUsingFile()) audioProcessor.useSyntheticIR(); };
+
     bypassButton.setClickingTogglesState (true);
     addAndMakeVisible (bypassButton);
     bypassAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (
@@ -99,7 +105,8 @@ void ConvoEditor::resized()
     auto header = area.removeFromTop (56);
     header.removeFromLeft (230);
     bypassButton.setBounds (header.removeFromRight (92).reduced (4, 12));
-    presetBox.setBounds    (header.removeFromRight (150).reduced (4, 14));
+    presetBox.setBounds    (header.removeFromRight (140).reduced (4, 14));
+    charBox.setBounds      (header.removeFromRight (120).reduced (4, 14));
 
     area.removeFromTop (6);
 

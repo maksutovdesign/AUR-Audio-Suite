@@ -62,6 +62,7 @@ private:
 
     juce::AudioProcessorValueTreeState apvts;
 
+    std::atomic<float>* pChar     = nullptr;
     std::atomic<float>* pDecay    = nullptr;
     std::atomic<float>* pTone     = nullptr;
     std::atomic<float>* pPredelay = nullptr;
@@ -77,7 +78,7 @@ private:
     std::atomic<bool> usingFile { false };
 
     // Cached shaping values so processBlock only asks for a rebuild on change.
-    float lastDecay = -1.f, lastTone = -1.f, lastWidth = -1.f;
+    float lastDecay = -1.f, lastTone = -1.f, lastWidth = -1.f, lastChar = -1.f;
 
     juce::AudioBuffer<float> wetBuffer, dryBuffer;
     juce::SmoothedValue<float> mixSmooth { 0.35f };

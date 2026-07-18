@@ -6,13 +6,13 @@
 #include "Knob.h"
 #include "MeterComponent.h"
 
-/** AUR CONVO editor — shared AurvedaUI design system (Obsidian, no theme picker). */
-class ConvoEditor : public juce::AudioProcessorEditor,
-                    private juce::Timer
+/** AUR RING editor — shared AurvedaUI design system (Obsidian, no theme picker). */
+class RingEditor : public juce::AudioProcessorEditor,
+                   private juce::Timer
 {
 public:
-    explicit ConvoEditor (ConvoProcessor&);
-    ~ConvoEditor() override;
+    explicit RingEditor (RingProcessor&);
+    ~RingEditor() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -21,24 +21,17 @@ private:
     void timerCallback() override { repaint(); }
     void refreshPresetBox();
 
-    ConvoProcessor& audioProcessor;
+    RingProcessor& audioProcessor;
     aur::ui::AurLookAndFeel lnf;
 
-    std::unique_ptr<aur::ui::LabeledKnob> decayKnob, toneKnob, predelayKnob, widthKnob, mixKnob;
+    std::unique_ptr<aur::ui::LabeledKnob> freqKnob, mixKnob, outputKnob;
 
     juce::ComboBox presetBox;
-    juce::ComboBox charBox;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> charAttachment;
     juce::TextButton bypassButton { "BYPASS" };
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> bypassAttachment;
-
-    juce::TextButton loadButton  { "LOAD IR…" };
-    juce::TextButton synthButton { "SYNTH" };
-    std::unique_ptr<juce::FileChooser> chooser;
-    juce::Rectangle<int> irStrip;
 
     aur::ui::MeterComponent inMeter  { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::input,  "IN" };
     aur::ui::MeterComponent outMeter { audioProcessor.getMeterState(), aur::ui::MeterComponent::Which::output, "OUT" };
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConvoEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RingEditor)
 };

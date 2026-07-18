@@ -9,6 +9,7 @@ ConvoProcessor::ConvoProcessor()
         .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
       apvts (*this, nullptr, "PARAMETERS", Params::createLayout())
 {
+    pChar     = apvts.getRawParameterValue (ParamID::character);
     pDecay    = apvts.getRawParameterValue (ParamID::decay);
     pTone     = apvts.getRawParameterValue (ParamID::tone);
     pPredelay = apvts.getRawParameterValue (ParamID::predelay);
@@ -42,7 +43,7 @@ void ConvoProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         loadImpulseFile (juce::File (savedPath));
     else
     {
-        lastDecay = lastTone = lastWidth = -1.f;   // force a rebuild
+        lastDecay = lastTone = lastWidth = lastChar = -1.f;   // force a rebuild
         rebuildSyntheticIR();
     }
 }
@@ -55,26 +56,71 @@ bool ConvoProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
     return layouts.getMainInputChannelSet() == out;
 }
 
+namespace
+{
+    // Schroeder all-pass — used to diffuse (smear) the noise into a denser,
+    // more natural tail. Delay in samples, feedback g.
+    struct AllPass
+    {
+        std::vector<float> buf;
+        int idx = 0; float g = 0.5f;
+        void init (int delaySamples, float feedback)
+        {
+            buf.assign ((size_t) juce::jmax (1, delaySamples), 0.0f);
+            idx = 0; g = feedback;
+        }
+        inline float process (float x)
+        {
+            const float d = buf[(size_t) idx];
+            const float y = -g * x + d;
+            buf[(size_t) idx] = x + g * y;
+            if (++idx >= (int) buf.size()) idx = 0;
+            return y;
+        }
+    };
+}
+
 void ConvoProcessor::rebuildSyntheticIR()
 {
     const double sr       = currentSampleRate;
-    const float  decaySec = pDecay->load();
+    const int    character = (int) std::round (pChar->load());
     const float  tone     = pTone->load()  * 0.01f;   // 0..1
     const float  width    = pWidth->load() * 0.01f;   // 0..1
+    float        decaySec = pDecay->load();
 
-    lastDecay = decaySec; lastTone = tone; lastWidth = width;
+    lastDecay = pDecay->load(); lastTone = tone; lastWidth = width;
+    lastChar  = (float) character;
 
+    // Per-character shaping.
+    //   lenScale   — stretches/compresses the tail length
+    //   brightMul  — scales the starting HF cutoff
+    //   dampEnd    — HF cutoff fraction reached at the tail end (frequency-
+    //                dependent decay: highs die faster than lows)
+    //   buildup    — fraction of the tail over which energy ramps up (halls)
+    //   diffusion  — number of all-pass smearing passes
+    //   erGain     — level of the discrete early reflections
+    //   disperse   — extra dispersive all-pass (spring "boing")
+    float lenScale = 1.0f, brightMul = 1.0f, dampEnd = 0.35f, buildup = 0.0f, erGain = 0.0f;
+    int   diffusion = 2; bool disperse = false;
+    switch (character)
+    {
+        case 1: lenScale = 0.7f; brightMul = 1.05f; dampEnd = 0.45f; erGain = 0.7f;  diffusion = 2; break; // Room
+        case 2: lenScale = 1.0f; brightMul = 1.4f;  dampEnd = 0.7f;  erGain = 0.0f;  diffusion = 5; break; // Plate
+        case 3: lenScale = 1.3f; brightMul = 0.95f; dampEnd = 0.25f; buildup = 0.18f; erGain = 0.35f; diffusion = 3; break; // Hall
+        case 4: lenScale = 0.9f; brightMul = 1.1f;  dampEnd = 0.5f;  erGain = 0.2f;  diffusion = 1; disperse = true; break; // Spring
+        default: break; // Smooth
+    }
+
+    decaySec = juce::jlimit (0.05f, 8.0f, decaySec * lenScale);
     const int tailSamples = juce::jmax (16, (int) std::round (decaySec * sr));
 
     juce::AudioBuffer<float> ir (2, tailSamples);
     ir.clear();
 
-    // Tone → one-pole lowpass cutoff. Darker (low tone) damps highs harder.
-    const float cutoffHz = juce::jmap (tone, 0.f, 1.f, 900.f, 16000.f);
-    const float lpCoef   = 1.0f - std::exp (-2.0f * juce::MathConstants<float>::pi
-                                            * cutoffHz / (float) sr);
+    const float cutoffStart = juce::jlimit (400.f, 18000.f,
+                                            juce::jmap (tone, 0.f, 1.f, 900.f, 16000.f) * brightMul);
+    const float cutoffEnd   = juce::jmax (300.f, cutoffStart * dampEnd);
 
-    // Two independent noise sources; R is blended toward L by (1-width).
     juce::Random rngL (0x51ed270b), rngR (0x2a13f9c7);
     const float decayK = 6.9077553f / (float) tailSamples; // ln(1000) → -60 dB at the tail end
 
@@ -84,7 +130,15 @@ void ConvoProcessor::rebuildSyntheticIR()
 
     for (int i = 0; i < tailSamples; ++i)
     {
-        const float env = std::exp (-decayK * (float) i);
+        const float frac = (float) i / (float) tailSamples;
+        // Frequency-dependent damping: cutoff glides from bright → dark.
+        const float cutoff = cutoffStart + (cutoffEnd - cutoffStart) * frac;
+        const float lpCoef = 1.0f - std::exp (-2.0f * juce::MathConstants<float>::pi
+                                              * cutoff / (float) sr);
+        float env = std::exp (-decayK * (float) i);
+        if (buildup > 0.0f && frac < buildup)            // halls swell in
+            env *= frac / buildup;
+
         const float nL = rngL.nextFloat() * 2.0f - 1.0f;
         const float nR = rngR.nextFloat() * 2.0f - 1.0f;
         lpL += lpCoef * (nL - lpL);
@@ -93,8 +147,43 @@ void ConvoProcessor::rebuildSyntheticIR()
         wR[i] = (lpR * width + lpL * (1.0f - width)) * env;
     }
 
-    // Normalise to unity energy so loudness stays consistent as Decay/Tone move;
-    // the Mix knob then sets the audible amount.
+    // Diffusion: smear the noise through a short all-pass chain per channel.
+    if (diffusion > 0)
+    {
+        const int primes[6] = { 142, 107, 379, 277, 449, 193 };
+        for (int c = 0; c < 2; ++c)
+        {
+            auto* w = ir.getWritePointer (c);
+            for (int d = 0; d < diffusion; ++d)
+            {
+                AllPass ap; ap.init (primes[d % 6] + c * 13, 0.6f);
+                for (int i = 0; i < tailSamples; ++i) w[i] = ap.process (w[i]);
+            }
+            if (disperse)   // spring: long dispersive all-pass → "boing"
+            {
+                AllPass sp; sp.init ((int) (0.028 * sr) + c * 7, 0.72f);
+                for (int i = 0; i < tailSamples; ++i) w[i] = sp.process (w[i]);
+            }
+        }
+    }
+
+    // Discrete early reflections at the head of the IR.
+    if (erGain > 0.0f)
+    {
+        const float ms[6]   = { 7.f, 13.f, 19.f, 23.f, 29.f, 37.f };
+        const float gain[6] = { 0.9f, -0.75f, 0.6f, -0.5f, 0.42f, -0.34f };
+        for (int c = 0; c < 2; ++c)
+        {
+            auto* w = ir.getWritePointer (c);
+            for (int t = 0; t < 6; ++t)
+            {
+                const int idx = (int) std::round (ms[t] * 0.001f * sr) + c * 3;
+                if (idx < tailSamples) w[idx] += erGain * gain[t];
+            }
+        }
+    }
+
+    // Normalise to unity energy so loudness stays consistent; Mix sets amount.
     double e = 0.0;
     for (int c = 0; c < 2; ++c)
     {
@@ -138,7 +227,9 @@ juce::String ConvoProcessor::getIRSourceName() const
         const auto p = apvts.state.getProperty (kIRPathProp).toString();
         return p.isNotEmpty() ? juce::File (p).getFileName() : juce::String ("File");
     }
-    return "Synthetic";
+    static const char* names[5] = { "Smooth", "Room", "Plate", "Hall", "Spring" };
+    const int c = juce::jlimit (0, 4, (int) std::round (pChar->load()));
+    return juce::String ("Synthetic · ") + names[c];
 }
 
 void ConvoProcessor::handleAsyncUpdate() { rebuildSyntheticIR(); }
@@ -162,11 +253,13 @@ void ConvoProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiB
         const float eps = 1.0e-4f;
         if (std::abs (pDecay->load()           - lastDecay) > eps
             || std::abs (pTone->load()  * 0.01f - lastTone) > eps
-            || std::abs (pWidth->load() * 0.01f - lastWidth) > eps)
+            || std::abs (pWidth->load() * 0.01f - lastWidth) > eps
+            || std::abs (pChar->load()          - lastChar) > 0.5f)
         {
             lastDecay = pDecay->load();
             lastTone  = pTone->load()  * 0.01f;
             lastWidth = pWidth->load() * 0.01f;
+            lastChar  = pChar->load();
             triggerAsyncUpdate();
         }
     }
