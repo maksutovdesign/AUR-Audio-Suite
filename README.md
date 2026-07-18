@@ -105,6 +105,9 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 | **VECTOR** | Vector synthesis — 4 corner sources, XY joystick with auto-orbit | ✅ v0.1 built · AU-validated (`aumu`) |
 | **GRAIN** | Granular cloud — 12 overlapping Hann grains, pitch spray, texture morph | ✅ v0.1 built · AU-validated (`aumu`) |
 | **PAD** | Additive evolving pad — 16 random-walking harmonic pairs, shimmer detune | ✅ v0.1 built · AU-validated (`aumu`) |
+| **BEAT** | Drum machine + 16-step sequencer (host-synced, 7 voices × 16 steps) | ✅ v0.1 built · AU-validated (`aumu`) |
+| **HYPER** | Flagship hybrid — unison wavetable + FM 2→1, multimode SVF, 2 env, LFO matrix | ✅ v0.1 built · AU-validated (`aumu`) |
+| **MORPH** | Engine morpher — one macro glides VA → FM → wavetable → additive | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
