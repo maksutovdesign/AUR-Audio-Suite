@@ -101,6 +101,8 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 | **KIT8** | Melodic 808 kick/bass — pitch sweep, click, long tail, glide | ✅ v0.1 built · AU-validated (`aumu`) |
 | **KIT9** | 909-style drum machine — saturated sweep kick, bright snare, metal+noise hats | ✅ v0.1 built · AU-validated (`aumu`) |
 | **FMPERC** | FM percussion kit — 7 pads of 2-op FM hits with per-pad character | ✅ v0.1 built · AU-validated (`aumu`) |
+| **WAVE** | Morphing wavetable synth — band-limited mip tables, LFO morph, 2 detuned oscs | ✅ v0.1 built · AU-validated (`aumu`) |
+| **VECTOR** | Vector synthesis — 4 corner sources, XY joystick with auto-orbit | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
