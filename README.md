@@ -90,6 +90,9 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 | **NOVA** | 4-operator FM synthesizer — 6 algorithms, per-operator ratio/level/ADSR, feedback, ADAA drive | ✅ v0.1 built · AU-validated (`aumu`) |
 | **MINI** | Compact subtractive synth — 1 osc + sub → ZDF-SVF, one envelope, glide | ✅ v0.1 built · AU-validated (`aumu`) |
 | **PLUCK** | Karplus-Strong string synth — twin strings, damping/sustain/brightness | ✅ v0.1 built · AU-validated (`aumu`) |
+| **SUB** | Pure sub bass — sine + 2nd harmonic + pitch punch | ✅ v0.1 built · AU-validated (`aumu`) |
+| **SUPER** | Supersaw stack — 7 detuned saws, stereo spread, SVF | ✅ v0.1 built · AU-validated (`aumu`) |
+| **CHIP** | Chiptune/8-bit — NES pulse widths, LFSR noise, crush, vibrato | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
