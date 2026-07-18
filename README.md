@@ -87,6 +87,7 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 |----------|----------|--------|
 | **AURORA** | Hybrid virtual-analog polysynth (2 PolyBLEP osc + sub + noise → ZDF ladder, per-voice filter/amp ADSR, unison, LFO, ADAA drive) | ✅ v0.1 built · AU-validated (`aumu`) |
 | **PULSE** | Analog drum machine — 7 synthesised voices (kick/snare/clap/hats/tom/rim), per-voice tune/decay, MIDI + pads, hat choke | ✅ v0.1 built · AU-validated (`aumu`) |
+| **NOVA** | 4-operator FM synthesizer — 6 algorithms, per-operator ratio/level/ADSR, feedback, ADAA drive | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
