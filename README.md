@@ -93,6 +93,9 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 | **SUB** | Pure sub bass — sine + 2nd harmonic + pitch punch | ✅ v0.1 built · AU-validated (`aumu`) |
 | **SUPER** | Supersaw stack — 7 detuned saws, stereo spread, SVF | ✅ v0.1 built · AU-validated (`aumu`) |
 | **CHIP** | Chiptune/8-bit — NES pulse widths, LFSR noise, crush, vibrato | ✅ v0.1 built · AU-validated (`aumu`) |
+| **DRONE** | Evolving drone — 4 drifting saws + sub, breathing SVF, 2 slow LFOs | ✅ v0.1 built · AU-validated (`aumu`) |
+| **ORGAN** | Tonewheel organ — 9 drawbars, percussion, scanner vibrato, rotary | ✅ v0.1 built · AU-validated (`aumu`) |
+| **BELL** | Modal synthesis — bell/bar/glass/membrane partial tables | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
