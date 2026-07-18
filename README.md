@@ -103,6 +103,8 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 | **FMPERC** | FM percussion kit — 7 pads of 2-op FM hits with per-pad character | ✅ v0.1 built · AU-validated (`aumu`) |
 | **WAVE** | Morphing wavetable synth — band-limited mip tables, LFO morph, 2 detuned oscs | ✅ v0.1 built · AU-validated (`aumu`) |
 | **VECTOR** | Vector synthesis — 4 corner sources, XY joystick with auto-orbit | ✅ v0.1 built · AU-validated (`aumu`) |
+| **GRAIN** | Granular cloud — 12 overlapping Hann grains, pitch spray, texture morph | ✅ v0.1 built · AU-validated (`aumu`) |
+| **PAD** | Additive evolving pad — 16 random-walking harmonic pairs, shimmer detune | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
