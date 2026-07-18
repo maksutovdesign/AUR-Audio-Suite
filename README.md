@@ -96,6 +96,9 @@ dosable ADAA analog-character layer — *warm but strictly correct*.
 | **DRONE** | Evolving drone — 4 drifting saws + sub, breathing SVF, 2 slow LFOs | ✅ v0.1 built · AU-validated (`aumu`) |
 | **ORGAN** | Tonewheel organ — 9 drawbars, percussion, scanner vibrato, rotary | ✅ v0.1 built · AU-validated (`aumu`) |
 | **BELL** | Modal synthesis — bell/bar/glass/membrane partial tables | ✅ v0.1 built · AU-validated (`aumu`) |
+| **STRING** | String ensemble (Solina-style) — 3-saw layers + BBD-style ensemble chorus | ✅ v0.1 built · AU-validated (`aumu`) |
+| **RES** | Comb resonator — noise exciter → tuned waveguide loop (bowed/blown/plucked) | ✅ v0.1 built · AU-validated (`aumu`) |
+| **KIT8** | Melodic 808 kick/bass — pitch sweep, click, long tail, glide | ✅ v0.1 built · AU-validated (`aumu`) |
 
 Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
 `auval -v aumu`.
