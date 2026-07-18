@@ -76,6 +76,20 @@ Two shared foundations make the whole line feel like one product:
 All modules build **AU + VST3 + Standalone**, universal (x86_64 + arm64), and
 pass Apple's `auval` host validator.
 
+## Instruments
+
+A parallel line of **synthesizers / instruments** shares its own sound engine
+`AurvedaSynth/` (anti-aliased PolyBLEP oscillators, ZDF ladder filter) and the
+same `AurvedaUI` design system. Same signature: an alias-free core plus a
+dosable ADAA analog-character layer — *warm but strictly correct*.
+
+| Instrument | Category | Status |
+|----------|----------|--------|
+| **AURORA** | Hybrid virtual-analog polysynth (2 PolyBLEP osc + sub + noise → ZDF ladder, per-voice filter/amp ADSR, unison, LFO, ADAA drive) | ✅ v0.1 built · AU-validated (`aumu`) |
+
+Instruments build **AU (MusicDevice) + VST3 + Standalone**, universal, and pass
+`auval -v aumu`.
+
 CLARITY is the white-space bet: dynamic, perceptual resonance suppression.
 An **FFT analyser** folds the spectrum onto a Bark (critical-band) grid and
 ducks only bands that protrude above the local spectral trend; the audio path
