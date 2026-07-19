@@ -30,7 +30,7 @@ private:
     };
     std::array<Row, Drum::Count> rows;
 
-    std::unique_ptr<aur::ui::LabeledKnob> driveKnob, volumeKnob;
+    std::unique_ptr<aur::ui::LabeledKnob> driveKnob, volumeKnob, swingKnob;
     std::array<std::array<juce::TextButton, 16>, Drum::Count> stepBtn;
     std::vector<std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>> stepAtt;
     juce::ComboBox presetBox;

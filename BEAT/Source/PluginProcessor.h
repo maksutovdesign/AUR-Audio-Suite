@@ -66,6 +66,7 @@ private:
     std::atomic<float>* pLevel[Drum::Count] { };
     std::atomic<float>* pStep[Drum::Count][16] { };
     std::atomic<float>* pSeqOn = nullptr;
+    std::atomic<float>* pSwing = nullptr;
     int lastStep = -1;
     std::atomic<float>* pTune [Drum::Count] { };
     std::atomic<float>* pDecay[Drum::Count] { };

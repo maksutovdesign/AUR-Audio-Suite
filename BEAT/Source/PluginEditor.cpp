@@ -37,7 +37,8 @@ BeatEditor::BeatEditor (BeatProcessor& p)
 
     driveKnob  = std::make_unique<LabeledKnob> (apvts, ParamID::drive,  "DRIVE");
     volumeKnob = std::make_unique<LabeledKnob> (apvts, ParamID::volume, "VOLUME");
-    addAndMakeVisible (*driveKnob); addAndMakeVisible (*volumeKnob);
+    swingKnob  = std::make_unique<LabeledKnob> (apvts, ParamID::swing,  "SWING");
+    addAndMakeVisible (*driveKnob); addAndMakeVisible (*volumeKnob); addAndMakeVisible (*swingKnob);
 
     addAndMakeVisible (presetBox);
     refreshPresetBox();
@@ -90,6 +91,7 @@ void BeatEditor::resized()
     auto bottom = area.removeFromBottom (96);
     driveKnob->setBounds  (bottom.removeFromLeft (100).reduced (6));
     volumeKnob->setBounds (bottom.removeFromLeft (100).reduced (6));
+    swingKnob->setBounds  (bottom.removeFromLeft (100).reduced (6));
 
     area.removeFromTop (6);
 

@@ -27,6 +27,9 @@ VectorEditor::VectorEditor (VectorProcessor& p)
         controls.push_back (std::move (comp));
     }
 
+    xyPad = std::make_unique<XYPad> (a, ParamID::x, ParamID::y);
+    addAndMakeVisible (*xyPad);
+
     addAndMakeVisible (presetBox);
     refreshPresetBox();
     presetBox.onChange = [this] { const auto i = presetBox.getSelectedId() - 1; if (i >= 0) audioProcessor.setCurrentProgram (i); };
@@ -35,7 +38,7 @@ VectorEditor::VectorEditor (VectorProcessor& p)
     addAndMakeVisible (keyboard);
 
     startTimerHz (15);
-    setSize (720, 400);
+    setSize (860, 430);
 }
 
 VectorEditor::~VectorEditor() { stopTimer(); setLookAndFeel (nullptr); }
@@ -68,6 +71,10 @@ void VectorEditor::resized()
 
     keyboard.setBounds (area.removeFromBottom (74).reduced (0, 6));
     area.removeFromTop (6);
+
+    auto padArea = area.removeFromLeft (juce::jmin (area.getHeight(), 240));
+    xyPad->setBounds (padArea.reduced (4));
+    area.removeFromLeft (10);
 
     const int cellW = 86, cellH = 90;
     const int perRow = juce::jmax (1, area.getWidth() / cellW);

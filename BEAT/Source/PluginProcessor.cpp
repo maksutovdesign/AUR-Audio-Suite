@@ -17,6 +17,7 @@ BeatProcessor::BeatProcessor()
             pStep[v][st] = apvts.getRawParameterValue (ParamID::step (v, st));
     }
     pSeqOn = apvts.getRawParameterValue (ParamID::seqon);
+    pSwing = apvts.getRawParameterValue (ParamID::swing);
 }
 
 void BeatProcessor::prepareToPlay (double sr, int)
@@ -86,7 +87,12 @@ void BeatProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBu
             if (auto pos = ph->getPosition(); pos.hasValue() && pos->getIsPlaying())
                 if (auto ppq = pos->getPpqPosition(); ppq.hasValue())
                 {
-                    const int stepNow = (int) std::floor (*ppq * 4.0) % 16;
+                    // Swing: the 2nd 16th of each 8th-note pair fires late (up to 50%).
+                    const double ppq16 = *ppq * 4.0;
+                    const int pair = (int) std::floor (ppq16 / 2.0);
+                    const double frac = ppq16 - pair * 2.0;
+                    const double thresh = 1.0 + (double) *pSwing * 0.5;
+                    const int stepNow = (pair * 2 + (frac >= thresh ? 1 : 0)) % 16;
                     if (stepNow != lastStep)
                     {
                         lastStep = stepNow;

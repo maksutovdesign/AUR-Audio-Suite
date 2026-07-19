@@ -22,6 +22,7 @@ namespace ParamID
     inline juce::String decay (int v) { return juce::String (Drum::idStem[(size_t) v]) + "_decay"; }
     inline juce::String step (int v, int st) { return juce::String (Drum::idStem[(size_t) v]) + "_s" + juce::String (st); }
     static constexpr auto seqon = "seqon";
+    static constexpr auto swing = "swing";
 }
 
 namespace Params
@@ -48,6 +49,8 @@ namespace Params
                 p.push_back (std::make_unique<AudioParameterBool> (ParameterID { ParamID::step (v, st), 1 },
                     String (Drum::shortName[(size_t) v]) + " S" + String (st + 1), false));
         p.push_back (std::make_unique<AudioParameterBool> (ParameterID { ParamID::seqon, 1 }, "Seq On", true));
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::swing, 1 }, "Swing",
+            NormalisableRange<float> (0.f, 1.f, 0.001f), 0.f, AudioParameterFloatAttributes().withStringFromValueFunction (pct)));
 
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::drive, 1 }, "Drive",
             NormalisableRange<float> (0.f, 1.f, 0.001f), 0.12f, AudioParameterFloatAttributes().withStringFromValueFunction (pct)));

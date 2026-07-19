@@ -11,6 +11,8 @@ namespace Presets
             { "Long Boom",    V{ { ParamID::sweep, 0.4f }, { ParamID::punch, 0.3f }, { ParamID::decay, 3.f }, { ParamID::tone, 1200.f }, { ParamID::drive, 0.5f } } },
             { "Hard Knock",   V{ { ParamID::sweep, 0.9f }, { ParamID::punch, 0.8f }, { ParamID::decay, 0.6f }, { ParamID::tone, 4000.f }, { ParamID::drive, 0.6f } } },
             { "Smooth Slide", V{ { ParamID::sweep, 0.3f }, { ParamID::punch, 0.2f }, { ParamID::decay, 2.f }, { ParamID::glide, 0.7f }, { ParamID::drive, 0.4f } } },
+            { "Distorted",    V{ { ParamID::sweep, 0.6f }, { ParamID::punch, 0.5f }, { ParamID::decay, 1.f }, { ParamID::tone, 3500.f }, { ParamID::drive, 0.85f } } },
+            { "Soft Sub",     V{ { ParamID::sweep, 0.15f }, { ParamID::punch, 0.1f }, { ParamID::decay, 1.8f }, { ParamID::tone, 900.f }, { ParamID::drive, 0.2f } } },
         };
         return presets;
     }
