@@ -77,37 +77,24 @@ public:
             const int e1 = juce::jmin (e0 + 1, 3);
             const float fr = m - (float) e0;
 
-            auto engine = [&] (int idx) -> float
+            // Always advance every engine so morph crossings stay phase-continuous.
+            const float engVA = (va1.next() + va2.next()) * 0.5f;
+            pm += freq * 2.0 / sr; if (pm >= 1) pm -= 1;
+            pc += freq / sr; if (pc >= 1) pc -= 1;
+            const float engFM = (float) std::sin (6.28318530718 * pc + 3.0 * std::sin (6.28318530718 * pm));
+            const float engWT = wt.next();
+            float engAD = 0.f;
             {
-                switch (idx)
+                static const double rr[4] = { 1.0, 2.0, 3.0, 4.0 };
+                static const float aa[4] = { 0.6f, 0.35f, 0.25f, 0.15f };
+                for (int h = 0; h < 4; ++h)
                 {
-                    case 0: return (va1.next() + va2.next()) * 0.5f;                       // VA
-                    case 1:                                                                 // FM pair
-                    {
-                        pm += freq * 2.0 / sr; if (pm >= 1) pm -= 1;
-                        pc += freq / sr; if (pc >= 1) pc -= 1;
-                        return (float) std::sin (6.28318530718 * pc + 3.0 * std::sin (6.28318530718 * pm));
-                    }
-                    case 2: return wt.next();                                              // wavetable
-                    default:                                                                // additive organ
-                    {
-                        float v = 0.f;
-                        static const double rr[4] = { 1.0, 2.0, 3.0, 4.0 };
-                        static const float aa[4] = { 0.6f, 0.35f, 0.25f, 0.15f };
-                        for (int h = 0; h < 4; ++h)
-                        {
-                            add[h] += freq * rr[h] / sr; if (add[h] >= 1) add[h] -= 1;
-                            v += (float) std::sin (6.28318530718 * add[h]) * aa[h];
-                        }
-                        return v;
-                    }
+                    add[h] += freq * rr[h] / sr; if (add[h] >= 1) add[h] -= 1;
+                    engAD += (float) std::sin (6.28318530718 * add[h]) * aa[h];
                 }
-            };
-            // NB: both engines advance their own phase only when computed; adjacent
-            // pair is always computed so the crossfade stays click-free.
-            const float vA = engine (e0);
-            const float vB = e1 != e0 ? engine (e1) : vA;
-            float v = vA * (1.0f - fr) + vB * fr;
+            }
+            const float eng[4] = { engVA, engFM, engWT, engAD };
+            float v = eng[e0] * (1.0f - fr) + eng[e1] * fr;
             v = filt.process (v, 0) * env.getNextSample() * level * 0.8f;
             out.addSample (0, start + s, v);
             if (out.getNumChannels() > 1) out.addSample (1, start + s, v);

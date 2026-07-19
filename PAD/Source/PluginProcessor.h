@@ -5,6 +5,7 @@
 #include "Parameters.h"
 #include "Voice.h"
 #include "ADAASaturator.h"
+#include "Reverb.h"
 #include "Metering.h"
 
 class PadProcessor : public juce::AudioProcessor
@@ -44,6 +45,9 @@ private:
     juce::Synthesiser synth;
     juce::MidiKeyboardState keyboardState;
     aur::ADAASaturator drive;
+    aur::Reverb verb;
+    juce::AudioBuffer<float> wetBuf;
+    std::atomic<float>* pSpace = nullptr;
     std::atomic<float>* pDrive = nullptr; std::atomic<float>* pVolume = nullptr;
     juce::SmoothedValue<float> volGain { 1.0f };
     aur::MeterState meters;

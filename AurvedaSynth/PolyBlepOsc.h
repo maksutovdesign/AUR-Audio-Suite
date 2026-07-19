@@ -36,26 +36,21 @@ struct PolyBlepOsc
                 out = (float) v;
             } break;
 
-            case 1: // Pulse / square with pulse width
+            case 1: // Pulse / square with pulse width (DC-compensated)
             {
                 double v = t < (double) width ? 1.0 : -1.0;
                 v += polyBlep (t, dt);
                 double t2 = t + (1.0 - (double) width);
                 if (t2 >= 1.0) t2 -= 1.0;
                 v -= polyBlep (t2, dt);
+                v -= 2.0 * (double) width - 1.0;   // remove PW-dependent DC
                 out = (float) v;
             } break;
 
-            case 2: // Triangle (leaky-integrated square)
+            case 2: // Triangle — naive (harmonics fall 1/h², aliasing negligible;
+                    // bounded ±1, no integrator drift)
             {
-                double v = t < 0.5 ? 1.0 : -1.0;
-                v += polyBlep (t, dt);
-                double t2 = t + 0.5;
-                if (t2 >= 1.0) t2 -= 1.0;
-                v -= polyBlep (t2, dt);
-                triState += 4.0 * dt * v;   // integrate; 4*dt keeps amplitude ~unity
-                triState *= 0.9992;         // leak to remove DC
-                out = (float) triState;
+                out = (float) (1.0 - 4.0 * std::fabs (t - 0.5));
             } break;
 
             default: // Sine

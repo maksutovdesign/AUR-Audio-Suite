@@ -15,7 +15,7 @@ BellEditor::BellEditor (BellProcessor& p)
     cells = {
         { ParamID::material, "MATERIAL", true }, { ParamID::decay, "DECAY", false }, { ParamID::bright, "BRIGHT", false },
         { ParamID::strike, "STRIKE", false }, { ParamID::inharm, "INHARM", false },
-        { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
+        { ParamID::space, "SPACE", false }, { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
     };
     for (auto& c : cells)
     {

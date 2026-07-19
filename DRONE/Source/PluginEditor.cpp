@@ -16,7 +16,7 @@ DroneEditor::DroneEditor (DroneProcessor& p)
         { ParamID::detune, "DETUNE", false }, { ParamID::motion, "MOTION", false },
         { ParamID::cutoff, "CUTOFF", false }, { ParamID::reso, "RESO", false },
         { ParamID::attack, "ATK", false }, { ParamID::release, "REL", false },
-        { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
+        { ParamID::space, "SPACE", false }, { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
     };
     for (auto& c : cells)
     {

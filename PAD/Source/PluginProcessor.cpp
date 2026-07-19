@@ -9,6 +9,7 @@ PadProcessor::PadProcessor()
     params.bind (apvts);
     pDrive  = apvts.getRawParameterValue (ParamID::drive);
     pVolume = apvts.getRawParameterValue (ParamID::volume);
+    pSpace  = apvts.getRawParameterValue (ParamID::space);
     synth.addSound (new PadSound());
     for (int i = 0; i < 8; ++i) synth.addVoice (new PadVoice (params));
     synth.setNoteStealingEnabled (true);
@@ -20,6 +21,8 @@ void PadProcessor::prepareToPlay (double sr, int)
     for (int i = 0; i < synth.getNumVoices(); ++i)
         if (auto* v = dynamic_cast<PadVoice*> (synth.getVoice (i))) v->prepareVoice (sr);
     drive.prepare (sr); drive.setFlavor (aur::ADAASaturator::Flavor::Tube);
+    verb.prepare (sr, 2);
+    wetBuf.setSize (2, 4096);
     volGain.reset (sr, 0.02);
 }
 
@@ -37,6 +40,19 @@ void PadProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuf
     buffer.clear();
     keyboardState.processNextMidiBuffer (midi, 0, n, true);
     synth.renderNextBlock (buffer, midi, 0, n);
+
+    // Reverb send (SPACE): 100%-wet FDN mixed back in.
+    if (const float space = *pSpace; space > 0.001f && totalOut > 1)
+    {
+        if (wetBuf.getNumSamples() < n) wetBuf.setSize (2, n, false, false, true);
+        wetBuf.copyFrom (0, 0, buffer, 0, 0, n);
+        wetBuf.copyFrom (1, 0, buffer, 1, 0, n);
+        verb.setParameters (0.65f, 1.5f + space * 4.5f, 0.4f, 12.0f, 30.0f);
+        verb.process (wetBuf.getWritePointer (0), wetBuf.getWritePointer (1), n);
+        const float wet = space * 0.6f;
+        buffer.addFrom (0, 0, wetBuf, 0, 0, n, wet);
+        buffer.addFrom (1, 0, wetBuf, 1, 0, n, wet);
+    }
 
     juce::dsp::AudioBlock<float> block (buffer);
     drive.setParameters (*pDrive * 100.0f, 100.0f);

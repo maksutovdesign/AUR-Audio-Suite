@@ -9,6 +9,7 @@ namespace ParamID
     static constexpr auto texture = "texture";  // source wavetable morph
     static constexpr auto attack  = "attack";
     static constexpr auto release = "release";
+    static constexpr auto space   = "space";    // reverb send
     static constexpr auto drive   = "drive";
     static constexpr auto volume  = "volume";
 }
@@ -30,6 +31,7 @@ namespace Params
         f (ParamID::texture, "Texture", 0.f, 1.f, 0.5f, 1.f, pct);
         f (ParamID::attack, "Attack", 0.01f, 5.f, 0.3f, 0.3f, sec);
         f (ParamID::release, "Release", 0.01f, 8.f, 1.f, 0.3f, sec);
+        f (ParamID::space, "Space", 0.f, 1.f, 0.35f, 1.f, pct);
         f (ParamID::drive, "Drive", 0.f, 1.f, 0.1f, 1.f, pct);
         f (ParamID::volume, "Volume", -60.f, 6.f, -9.f, 2.5f, [](float v,int){return String(v,1)+" dB";});
         return { p.begin(), p.end() };

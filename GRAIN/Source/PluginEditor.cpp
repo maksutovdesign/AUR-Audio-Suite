@@ -15,7 +15,7 @@ GrainEditor::GrainEditor (GrainProcessor& p)
     cells = {
         { ParamID::density, "DENSITY", false }, { ParamID::size, "SIZE", false }, { ParamID::spray, "SPRAY", false }, { ParamID::texture, "TEXTURE", false },
         { ParamID::attack, "ATK", false }, { ParamID::release, "REL", false },
-        { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
+        { ParamID::space, "SPACE", false }, { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
     };
     for (auto& c : cells)
     {

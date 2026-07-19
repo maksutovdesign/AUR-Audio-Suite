@@ -15,7 +15,7 @@ PadEditor::PadEditor (PadProcessor& p)
     cells = {
         { ParamID::bright, "BRIGHT", false }, { ParamID::motion, "MOTION", false }, { ParamID::shimmer, "SHIMMER", false }, { ParamID::odd, "ODD/EVEN", false },
         { ParamID::attack, "ATK", false }, { ParamID::release, "REL", false },
-        { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
+        { ParamID::space, "SPACE", false }, { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
     };
     for (auto& c : cells)
     {

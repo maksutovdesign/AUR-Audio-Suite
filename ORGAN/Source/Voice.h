@@ -35,7 +35,7 @@ public:
         level = 0.4f + 0.6f * vel;
         freq = 440.0 * std::pow (2.0, (note - 69) / 12.0);
         for (auto& ph : phase) ph = 0.0;
-        percEnv = 1.0f; vibPhase = rotPhase = 0.0;
+        percEnv = 1.0f; vibPhase = rotPhase = 0.0; attEnv = 0.0f;
         on = true; relEnv = 1.0f;
     }
     void stopNote (float, bool tail) override { if (tail) on = false; else { relEnv = 0.0f; clearCurrentNote(); } }
@@ -53,6 +53,7 @@ public:
         const double rotHz = 0.5 + *sp.rotary * 6.5;    // slow…fast rotor
         float bars[9]; for (int i = 0; i < 9; ++i) bars[i] = *sp.bar[i];
         const float relC = (float) std::exp (-1.0 / (0.008 * sr));   // organ = fast stop
+        const float attC = (float) std::exp (-1.0 / (0.004 * sr));   // 4 ms attack ramp
 
         for (int s = 0; s < n; ++s)
         {
@@ -69,8 +70,9 @@ public:
                 if (g > 0.001f) v += (float) std::sin (6.28318530718 * phase[i]) * g;
             }
             percEnv *= percC;
+            attEnv = 1.0f + (attEnv - 1.0f) * attC;
             if (! on) relEnv *= relC;
-            v *= 0.18f * level * relEnv;
+            v *= 0.18f * level * relEnv * attEnv;
 
             const float pan = 0.5f + 0.35f * (float) std::sin (6.28318530718 * rotPhase);
             out.addSample (0, start + s, v * (1.0f - pan) * 2.0f * 0.7f);
@@ -83,6 +85,6 @@ private:
     const SynthParams& sp;
     double phase[9] { };
     double freq = 440.0, vibPhase = 0.0, rotPhase = 0.0;
-    float level = 1.0f, percEnv = 0.0f, relEnv = 1.0f;
+    float level = 1.0f, percEnv = 0.0f, relEnv = 1.0f, attEnv = 0.0f;
     bool on = false;
 };
