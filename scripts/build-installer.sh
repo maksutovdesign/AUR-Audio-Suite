@@ -25,6 +25,9 @@ for m in "${MODULES[@]}"; do
     art="$ROOT/$m/build/${m}_artefacts/Release"
     vst3="$(ls -d "$art"/VST3/*.vst3 2>/dev/null | head -1 || true)"
     au="$(ls -d "$art"/AU/*.component 2>/dev/null | head -1 || true)"
+    # Fallback: stage from the installed copies (COPY_PLUGIN_AFTER_BUILD puts them there).
+    [ -z "$vst3" ] && vst3="$(ls -d "$HOME/Library/Audio/Plug-Ins/VST3/AUR ${m}.vst3" 2>/dev/null || true)"
+    [ -z "$au" ]   && au="$(ls -d "$HOME/Library/Audio/Plug-Ins/Components/AUR ${m}.component" 2>/dev/null || true)"
     [ -n "$vst3" ] && cp -R "$vst3" "$VST3_DST/" && echo "  + $(basename "$vst3")"
     [ -n "$au" ]   && cp -R "$au"   "$AU_DST/"   && echo "  + $(basename "$au")"
 done
@@ -56,9 +59,10 @@ XML
 cat > "$ROOT/dist/welcome.html" <<HTML
 <html><body style="font-family:-apple-system;padding:16px">
 <h2>AUR Audio Suite $VERSION</h2>
-<p>Installs 7 plug-ins (AU + VST3): <b>PRISM</b> EQ, <b>EMBER</b> saturator,
-<b>GRIP</b> compressor, <b>CLARITY</b> resonance suppressor, <b>HAZE</b> reverb,
-<b>CEIL</b> limiter, and <b>SCOPE</b> metering.</p>
+<p>Installs the full <b>AUR</b> suite (AU + VST3): <b>31 effects</b> — EQ,
+saturation, compression, limiting, reverbs, modulation, restoration, metering —
+and <b>23 instruments</b> — synthesizers (virtual-analog, FM, wavetable,
+granular, additive, physical modelling) and drum machines.</p>
 <p>Universal (Apple Silicon + Intel). Rescan plug-ins in your DAW after installing.</p>
 </body></html>
 HTML
