@@ -20,6 +20,8 @@ public:
         label.setColour (juce::Label::textColourId, aur::ui::theme().inkMute);
         addAndMakeVisible (label);
         addAndMakeVisible (box);
+        if (auto* pc = dynamic_cast<juce::AudioParameterChoice*> (apvts.getParameter (paramID)))
+            box.addItemList (pc->choices, 1);
         attachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (apvts, paramID, box);
     }
     void resized() override

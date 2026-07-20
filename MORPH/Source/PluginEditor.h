@@ -17,6 +17,8 @@ public:
         label.setFont (aur::ui::monoFont (aur::ui::theme().fsLabel, true));
         label.setColour (juce::Label::textColourId, aur::ui::theme().inkMute);
         addAndMakeVisible (label); addAndMakeVisible (box);
+        if (auto* pc = dynamic_cast<juce::AudioParameterChoice*> (a.getParameter (id)))
+            box.addItemList (pc->choices, 1);
         att = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (a, id, box);
     }
     void resized() override { auto b = getLocalBounds(); label.setBounds (b.removeFromTop (16)); box.setBounds (b.reduced (2, 8).withTrimmedTop (10)); }
