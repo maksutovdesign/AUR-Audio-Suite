@@ -17,3 +17,4 @@ Thumbs.db
 dist/
 downloads/
 site/downloads/
+scripts/.deploy-env
