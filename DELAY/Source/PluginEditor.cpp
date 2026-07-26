@@ -79,7 +79,7 @@ void DelayEditor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "DELAY", "Stereo echo · damped feedback");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "DELAY", "Stereo echo - damped feedback");
 }
 
 void DelayEditor::resized()

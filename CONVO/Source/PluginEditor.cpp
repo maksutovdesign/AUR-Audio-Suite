@@ -84,7 +84,7 @@ void ConvoEditor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "CONVO", "Convolution reverb · IR");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "CONVO", "Convolution reverb - IR");
 
     // IR source readout panel.
     g.setColour (t.panel);

@@ -89,7 +89,7 @@ void PrismEditor::resized()
     display->setBounds (area.removeFromTop (210));
     area.removeFromTop (12);
 
-    // Nine knobs in a single row, grouped LOW · MID · HIGH.
+    // Nine knobs in a single row, grouped LOW - MID - HIGH.
     auto row = area.removeFromTop (juce::jmin (150, area.getHeight()));
     LabeledKnob* order[9] = { hpK.get(), lsFK.get(), lsGK.get(), bFK.get(), bGK.get(), bQK.get(), hsFK.get(), hsGK.get(), lpK.get() };
     const int kw = row.getWidth() / 9;

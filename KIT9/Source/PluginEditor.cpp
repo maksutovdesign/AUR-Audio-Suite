@@ -63,7 +63,7 @@ void Kit9Editor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 420, 60 }, "KIT9", "Analog drum machine · 909 punch");
+    drawBrandHeader (g, { 20, 16, 420, 60 }, "KIT9", "Analog drum machine - 909 punch");
 }
 
 void Kit9Editor::resized()

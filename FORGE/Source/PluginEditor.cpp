@@ -80,7 +80,7 @@ void ForgeEditor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "FORGE", "Channel strip · analog heat, digital law");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "FORGE", "Channel strip - analog heat, digital law");
 }
 
 void ForgeEditor::resized()

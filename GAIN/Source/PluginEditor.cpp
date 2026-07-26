@@ -22,7 +22,7 @@ GainEditor::~GainEditor(){ setLookAndFeel(nullptr);}
 void GainEditor::refreshPresetBox(){ presetBox.clear(juce::dontSendNotification); int id=1; for(const auto& pr:Presets::getFactoryPresets()) presetBox.addItem(pr.name,id++); presetBox.setSelectedId(ap.getCurrentProgram()+1,juce::dontSendNotification);}
 void GainEditor::paint(juce::Graphics& g){ const auto& t=theme(); g.fillAll(t.ground);
   const auto cx=(float)getWidth()*0.5f; juce::ColourGradient gl(t.accent.withAlpha(0.12f),cx,150.0f,t.ground.withAlpha(0.0f),cx,320.0f,true); g.setGradientFill(gl); g.fillRect(getLocalBounds());
-  drawBrandHeader(g,{20,16,360,60},"GAIN","Gain · balance · width · M/S"); }
+  drawBrandHeader(g,{20,16,360,60},"GAIN","Gain - balance - width - M/S"); }
 void GainEditor::resized(){ auto area=getLocalBounds().reduced(18); auto header=area.removeFromTop(56); header.removeFromLeft(180);
   bypassButton.setBounds(header.removeFromRight(88).reduced(4,12));
   for(auto& bt:toggleBtns) bt->setBounds(header.removeFromRight(90).reduced(4,12));

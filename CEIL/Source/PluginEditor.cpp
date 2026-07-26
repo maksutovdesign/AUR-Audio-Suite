@@ -74,7 +74,7 @@ void CeilEditor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "CEIL", "True-peak limiter · LUFS");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "CEIL", "True-peak limiter - LUFS");
 
     // LUFS readout panel.
     g.setColour (t.panel);

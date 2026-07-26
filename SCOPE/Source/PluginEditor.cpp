@@ -37,7 +37,7 @@ void ScopeEditor::paint (juce::Graphics& g)
 {
     const auto& t = theme();
     g.fillAll (t.ground);
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "SCOPE", "Spectrum · LUFS · correlation");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "SCOPE", "Spectrum - LUFS - correlation");
 
     // LUFS panel.
     g.setColour (t.panel);

@@ -74,7 +74,7 @@ void GateEditor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "GATE", "Noise gate · expander");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "GATE", "Noise gate - expander");
 }
 
 void GateEditor::resized()

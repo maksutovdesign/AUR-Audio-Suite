@@ -73,7 +73,7 @@ void ImagerEditor::paint (juce::Graphics& g)
     g.setGradientFill (glow);
     g.fillRect (getLocalBounds());
 
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "IMAGER", "Stereo width · mono-maker");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "IMAGER", "Stereo width - mono-maker");
 }
 
 void ImagerEditor::resized()

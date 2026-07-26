@@ -70,7 +70,7 @@ void MotionEditor::paint (juce::Graphics& g)
 {
     const auto& t = theme();
     g.fillAll (t.ground);
-    drawBrandHeader (g, { 20, 16, 360, 60 }, "MOTION", "Dynamic EQ · 3 bands");
+    drawBrandHeader (g, { 20, 16, 360, 60 }, "MOTION", "Dynamic EQ - 3 bands");
 }
 
 void MotionEditor::resized()
