@@ -10,7 +10,7 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 juce_add_plugin(RING
-    COMPANY_NAME "Aurveda Audio" BUNDLE_ID com.aurveda.aur.ring
+    COMPANY_NAME "AUR Audio" BUNDLE_ID com.aurveda.aur.ring
     PLUGIN_MANUFACTURER_CODE Aurv PLUGIN_CODE Arng
     FORMATS AU VST3 Standalone AU_MAIN_TYPE kAudioUnitType_Effect
     PRODUCT_NAME "AUR RING" IS_SYNTH FALSE NEEDS_MIDI_INPUT FALSE COPY_PLUGIN_AFTER_BUILD TRUE)

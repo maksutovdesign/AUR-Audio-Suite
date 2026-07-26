@@ -17,7 +17,7 @@ else()
 endif()
 
 juce_add_plugin(HAZE
-    COMPANY_NAME             "Aurveda Audio"
+    COMPANY_NAME             "AUR Audio"
     BUNDLE_ID                com.aurveda.aur.haze
     PLUGIN_MANUFACTURER_CODE Aurv
     PLUGIN_CODE              Ahz1

@@ -17,7 +17,7 @@ else()
 endif()
 
 juce_add_plugin(DENOISE
-    COMPANY_NAME             "Aurveda Audio"
+    COMPANY_NAME             "AUR Audio"
     BUNDLE_ID                com.aurveda.aur.denoise
     PLUGIN_MANUFACTURER_CODE Aurv
     PLUGIN_CODE              Adn1

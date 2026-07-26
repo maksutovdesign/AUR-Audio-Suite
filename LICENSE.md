@@ -1,6 +1,6 @@
 # License
 
-Copyright (c) 2026 Aurveda Audio
+Copyright (c) 2026 AUR Audio
 
 AUR's own source code is released under the MIT License:
 

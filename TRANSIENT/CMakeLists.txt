@@ -10,7 +10,7 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 juce_add_plugin(TRANSIENT
-    COMPANY_NAME "Aurveda Audio" BUNDLE_ID com.aurveda.aur.transient
+    COMPANY_NAME "AUR Audio" BUNDLE_ID com.aurveda.aur.transient
     PLUGIN_MANUFACTURER_CODE Aurv PLUGIN_CODE Ats1
     FORMATS AU VST3 Standalone AU_MAIN_TYPE kAudioUnitType_Effect
     PRODUCT_NAME "AUR TRANSIENT" IS_SYNTH FALSE NEEDS_MIDI_INPUT FALSE COPY_PLUGIN_AFTER_BUILD TRUE)

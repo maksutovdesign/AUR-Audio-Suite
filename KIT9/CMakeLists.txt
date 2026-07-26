@@ -10,7 +10,7 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 juce_add_plugin(KIT9
-    COMPANY_NAME "Aurveda Audio" BUNDLE_ID com.aurveda.aur.kit9
+    COMPANY_NAME "AUR Audio" BUNDLE_ID com.aurveda.aur.kit9
     PLUGIN_MANUFACTURER_CODE Aurv PLUGIN_CODE Ak91
     FORMATS AU VST3 Standalone
     IS_SYNTH TRUE NEEDS_MIDI_INPUT TRUE

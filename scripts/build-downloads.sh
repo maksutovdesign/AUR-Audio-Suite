@@ -24,7 +24,7 @@ for m in "${MODULES[@]}"; do
   [ -d "$c" ] && cp -R "$c" "$dst/"
   if [ -z "$(ls -A "$dst" 2>/dev/null)" ]; then echo "  skip $m (no artefacts)"; rm -rf "$tmp"; continue; fi
   cat > "$dst/INSTALL.txt" <<TXT
-AUR $m — Aurveda Audio
+AUR $m — AUR Audio
 Copy "AUR $m.vst3"      -> ~/Library/Audio/Plug-Ins/VST3/
 Copy "AUR $m.component" -> ~/Library/Audio/Plug-Ins/Components/
 Then rescan plug-ins in your DAW. Universal (Apple Silicon + Intel).

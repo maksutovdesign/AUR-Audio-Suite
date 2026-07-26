@@ -21,7 +21,7 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 juce_add_plugin(%%NAME%%
-    COMPANY_NAME "Aurveda Audio" BUNDLE_ID com.aurveda.aur.%%LOWER%%
+    COMPANY_NAME "AUR Audio" BUNDLE_ID com.aurveda.aur.%%LOWER%%
     PLUGIN_MANUFACTURER_CODE Aurv PLUGIN_CODE %%CODE%%
     FORMATS AU VST3 Standalone AU_MAIN_TYPE kAudioUnitType_Effect
     PRODUCT_NAME "AUR %%NAME%%" IS_SYNTH FALSE NEEDS_MIDI_INPUT FALSE COPY_PLUGIN_AFTER_BUILD TRUE)

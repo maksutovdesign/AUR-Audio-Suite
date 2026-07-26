@@ -17,7 +17,7 @@ else()
 endif()
 
 juce_add_plugin(GATE
-    COMPANY_NAME             "Aurveda Audio"
+    COMPANY_NAME             "AUR Audio"
     BUNDLE_ID                com.aurveda.aur.gate
     PLUGIN_MANUFACTURER_CODE Aurv
     PLUGIN_CODE              Agt1

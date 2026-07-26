@@ -10,7 +10,7 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 juce_add_plugin(PHASER
-    COMPANY_NAME "Aurveda Audio" BUNDLE_ID com.aurveda.aur.phaser
+    COMPANY_NAME "AUR Audio" BUNDLE_ID com.aurveda.aur.phaser
     PLUGIN_MANUFACTURER_CODE Aurv PLUGIN_CODE Aph1
     FORMATS AU VST3 Standalone AU_MAIN_TYPE kAudioUnitType_Effect
     PRODUCT_NAME "AUR PHASER" IS_SYNTH FALSE NEEDS_MIDI_INPUT FALSE COPY_PLUGIN_AFTER_BUILD TRUE)

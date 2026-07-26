@@ -17,7 +17,7 @@ else()
 endif()
 
 juce_add_plugin(CEIL
-    COMPANY_NAME             "Aurveda Audio"
+    COMPANY_NAME             "AUR Audio"
     BUNDLE_ID                com.aurveda.aur.ceil
     PLUGIN_MANUFACTURER_CODE Aurv
     PLUGIN_CODE              Ace1

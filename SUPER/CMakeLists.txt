@@ -10,7 +10,7 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 juce_add_plugin(SUPER
-    COMPANY_NAME "Aurveda Audio" BUNDLE_ID com.aurveda.aur.super
+    COMPANY_NAME "AUR Audio" BUNDLE_ID com.aurveda.aur.super
     PLUGIN_MANUFACTURER_CODE Aurv PLUGIN_CODE Asp1
     FORMATS AU VST3 Standalone
     IS_SYNTH TRUE NEEDS_MIDI_INPUT TRUE

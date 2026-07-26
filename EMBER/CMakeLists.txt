@@ -18,7 +18,7 @@ else()
 endif()
 
 juce_add_plugin(EMBER
-    COMPANY_NAME             "Aurveda Audio"
+    COMPANY_NAME             "AUR Audio"
     BUNDLE_ID                com.aurveda.aur.ember
     PLUGIN_MANUFACTURER_CODE Aurv
     PLUGIN_CODE              Aem1
