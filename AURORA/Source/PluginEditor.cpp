@@ -24,6 +24,7 @@ AuroraEditor::AuroraEditor (AuroraProcessor& p)
         { "AMP ENV", { { ParamID::aatk, "ATK", false }, { ParamID::adec, "DEC", false }, { ParamID::asus, "SUS", false }, { ParamID::arel, "REL", false } }, 2 },
         { "UNISON", { { ParamID::unison, "VOICES", false }, { ParamID::detune, "DETUNE", false }, { ParamID::spread, "SPREAD", false } }, 2 },
         { "LFO", { { ParamID::lforate, "RATE", false }, { ParamID::lfoshape, "SHAPE", true }, { ParamID::lfo2cut, ">CUT", false }, { ParamID::lfo2pitch, ">PITCH", false } }, 2 },
+        { "ARP", { { ParamID::arpon, "ON", false }, { ParamID::arpmode, "MODE", true }, { ParamID::arprate, "RATE", true }, { ParamID::arpoct, "OCT", false }, { ParamID::arpgate, "GATE", false } }, 0 },
     };
 
     buildControls();
@@ -43,7 +44,7 @@ AuroraEditor::AuroraEditor (AuroraProcessor& p)
     addAndMakeVisible (keyboard);
 
     startTimerHz (15);
-    setSize (960, 700);
+    setSize (960, 820);
 }
 
 AuroraEditor::~AuroraEditor() { stopTimer(); setLookAndFeel (nullptr); }

@@ -20,6 +20,7 @@ HyperEditor::HyperEditor (HyperProcessor& p)
         { ParamID::aatk, "A.ATK", false }, { ParamID::adec, "A.DEC", false }, { ParamID::asus, "A.SUS", false }, { ParamID::arel, "A.REL", false },
         { ParamID::lforate, "LFO RATE", false }, { ParamID::lfo2cut, "LFO>CUT", false }, { ParamID::lfo2morph, "LFO>MRPH", false },
         { ParamID::glide, "GLIDE", false }, { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
+        { ParamID::arpon, "ARP", false }, { ParamID::arpmode, "A.MODE", true }, { ParamID::arprate, "A.RATE", true }, { ParamID::arpoct, "A.OCT", false }, { ParamID::arpgate, "A.GATE", false },
     };
     for (auto& c : cells)
     {
@@ -38,7 +39,7 @@ HyperEditor::HyperEditor (HyperProcessor& p)
     addAndMakeVisible (keyboard);
 
     startTimerHz (15);
-    setSize (900, 560);
+    setSize (900, 660);
 }
 
 HyperEditor::~HyperEditor() { stopTimer(); setLookAndFeel (nullptr); }

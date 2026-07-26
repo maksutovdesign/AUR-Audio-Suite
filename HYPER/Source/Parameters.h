@@ -12,7 +12,12 @@ namespace ParamID
     static constexpr auto fatk = "fatk"; static constexpr auto fdec = "fdec"; static constexpr auto fsus = "fsus"; static constexpr auto frel = "frel";
     static constexpr auto aatk = "aatk"; static constexpr auto adec = "adec"; static constexpr auto asus = "asus"; static constexpr auto arel = "arel";
     static constexpr auto lforate = "lforate"; static constexpr auto lfo2cut = "lfo2cut"; static constexpr auto lfo2morph = "lfo2morph";
-    static constexpr auto glide = "glide"; static constexpr auto drive = "drive"; static constexpr auto volume = "volume";
+    static constexpr auto glide = "glide"; static constexpr auto drive = "drive"; static constexpr auto arpon  = "arpon";
+    static constexpr auto arpmode= "arpmode";
+    static constexpr auto arprate= "arprate";
+    static constexpr auto arpoct = "arpoct";
+    static constexpr auto arpgate= "arpgate";
+    static constexpr auto volume = "volume";
 }
 
 namespace Params
@@ -52,6 +57,11 @@ namespace Params
         f (ParamID::glide, "Glide", 0.f, 1.f, 0.f, 1.f, pct);
         f (ParamID::drive, "Drive", 0.f, 1.f, 0.2f, 1.f, pct);
         f (ParamID::volume, "Volume", -60.f, 6.f, -9.f, 2.5f, [](float v,int){return String(v,1)+" dB";});
+        p.push_back (std::make_unique<AudioParameterBool> (ParameterID { ParamID::arpon, 1 }, "Arp", false));
+        p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { ParamID::arpmode, 1 }, "Arp Mode", StringArray { "Up","Down","Up-Down","Random","As Played" }, 0));
+        p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { ParamID::arprate, 1 }, "Arp Rate", StringArray { "1/4","1/8","1/16","1/32","1/8T","1/16T" }, 2));
+        p.push_back (std::make_unique<AudioParameterInt> (ParameterID { ParamID::arpoct, 1 }, "Arp Octaves", 1, 4, 1));
+        p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::arpgate, 1 }, "Arp Gate", NormalisableRange<float>(0.05f,1.f,0.001f), 0.7f, AudioParameterFloatAttributes().withStringFromValueFunction([](float v,int){return String((int)(v*100))+" %";})));
         return { p.begin(), p.end() };
     }
 }

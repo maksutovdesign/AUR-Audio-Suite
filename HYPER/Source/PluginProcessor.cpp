@@ -7,6 +7,8 @@ HyperProcessor::HyperProcessor()
       apvts (*this, nullptr, "PARAMETERS", Params::createLayout())
 {
     params.bind (apvts);
+    pArpOn=apvts.getRawParameterValue(ParamID::arpon); pArpMode=apvts.getRawParameterValue(ParamID::arpmode);
+    pArpRate=apvts.getRawParameterValue(ParamID::arprate); pArpOct=apvts.getRawParameterValue(ParamID::arpoct); pArpGate=apvts.getRawParameterValue(ParamID::arpgate);
     pDrive  = apvts.getRawParameterValue (ParamID::drive);
     pVolume = apvts.getRawParameterValue (ParamID::volume);
     synth.addSound (new HyperSound());
@@ -36,6 +38,18 @@ void HyperProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiB
     const int n = buffer.getNumSamples();
     buffer.clear();
     keyboardState.processNextMidiBuffer (midi, 0, n, true);
+    {
+        double bpm=120.0, ppq=0.0; bool playing=false;
+        if (auto* ph=getPlayHead())
+            if (auto pos=ph->getPosition(); pos.hasValue())
+            {
+                if (auto b=pos->getBpm()) bpm=*b;
+                if (auto q=pos->getPpqPosition()) ppq=*q;
+                playing=pos->getIsPlaying();
+            }
+        arp.setParameters (*pArpOn>0.5f,(int)*pArpMode,(int)*pArpRate,(int)*pArpOct,*pArpGate);
+        arp.process (midi, bpm, playing, ppq, n);
+    }
     synth.renderNextBlock (buffer, midi, 0, n);
 
     juce::dsp::AudioBlock<float> block (buffer);

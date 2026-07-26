@@ -4,6 +4,7 @@
 #include <juce_dsp/juce_dsp.h>
 #include "Parameters.h"
 #include "Voice.h"
+#include "Arpeggiator.h"
 #include "ADAASaturator.h"
 #include "Metering.h"
 
@@ -43,6 +44,8 @@ private:
     SynthParams params;
     juce::Synthesiser synth;
     juce::MidiKeyboardState keyboardState;
+    aur::syn::Arpeggiator arp;
+    std::atomic<float> *pArpOn=nullptr,*pArpMode=nullptr,*pArpRate=nullptr,*pArpOct=nullptr,*pArpGate=nullptr;
     aur::ADAASaturator drive;
     std::atomic<float>* pDrive = nullptr; std::atomic<float>* pVolume = nullptr;
     juce::SmoothedValue<float> volGain { 1.0f };

@@ -15,3 +15,5 @@ DerivedData/
 .DS_Store
 Thumbs.db
 dist/
+downloads/
+site/downloads/

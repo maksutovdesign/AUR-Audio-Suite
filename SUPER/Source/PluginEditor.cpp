@@ -17,6 +17,7 @@ SuperEditor::SuperEditor (SuperProcessor& p)
         { ParamID::cutoff, "CUTOFF", false }, { ParamID::reso, "RESO", false },
         { ParamID::attack, "ATK", false }, { ParamID::decay, "DEC", false }, { ParamID::sustain, "SUS", false }, { ParamID::release, "REL", false },
         { ParamID::glide, "GLIDE", false }, { ParamID::drive, "DRIVE", false }, { ParamID::volume, "VOLUME", false },
+        { ParamID::arpon, "ARP", false }, { ParamID::arpmode, "A.MODE", true }, { ParamID::arprate, "A.RATE", true }, { ParamID::arpoct, "A.OCT", false }, { ParamID::arpgate, "A.GATE", false },
     };
     for (auto& c : cells)
     {
@@ -35,7 +36,7 @@ SuperEditor::SuperEditor (SuperProcessor& p)
     addAndMakeVisible (keyboard);
 
     startTimerHz (15);
-    setSize (720, 400);
+    setSize (760, 470);
 }
 
 SuperEditor::~SuperEditor() { stopTimer(); setLookAndFeel (nullptr); }
