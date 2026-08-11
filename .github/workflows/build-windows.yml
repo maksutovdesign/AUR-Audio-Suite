@@ -1,8 +1,10 @@
 name: Build Windows VST3
 
-# Builds Windows x64 VST3 for all 54 plugins on a GitHub Windows runner
-# (they can't be cross-compiled from macOS) and attaches per-plugin +
-# suite zips to the v0.1.0 release.
+# Builds Windows x64 VST3 for all 54 plugins on GitHub Windows runners
+# (they can't be cross-compiled from macOS). Each plugin is its own matrix
+# job (parallel, visible per-plugin progress) instead of one long sequential
+# loop. A final job collects everything into per-plugin + suite zips and
+# attaches them to the v0.1.0 release.
 
 on:
   workflow_dispatch:
@@ -13,68 +15,131 @@ permissions:
   contents: write
 
 env:
-  MODULES: >-
-    EMBER CLARITY GRIP CEIL PRISM HAZE SCOPE IMAGER DELAY MOTION ASSIST FORGE
-    DEESS DEHUM GATE DENOISE CHORUS FLANGER PHASER TREMOLO CLIPPER CRUSH
-    TRANSIENT MULTI EXCITE GAIN GONIO TUNER PITCH CONVO RING
-    AURORA PULSE NOVA MINI PLUCK SUB SUPER CHIP DRONE ORGAN BELL STRING RES
-    KIT8 KIT9 FMPERC WAVE VECTOR GRAIN PAD BEAT HYPER MORPH
   RELEASE_TAG: v0.1.0
 
 jobs:
-  windows:
+  build:
+    strategy:
+      fail-fast: false
+      max-parallel: 16
+      matrix:
+        module:
+          - EMBER
+          - CLARITY
+          - GRIP
+          - CEIL
+          - PRISM
+          - HAZE
+          - SCOPE
+          - IMAGER
+          - DELAY
+          - MOTION
+          - ASSIST
+          - FORGE
+          - DEESS
+          - DEHUM
+          - GATE
+          - DENOISE
+          - CHORUS
+          - FLANGER
+          - PHASER
+          - TREMOLO
+          - CLIPPER
+          - CRUSH
+          - TRANSIENT
+          - MULTI
+          - EXCITE
+          - GAIN
+          - GONIO
+          - TUNER
+          - PITCH
+          - CONVO
+          - RING
+          - AURORA
+          - PULSE
+          - NOVA
+          - MINI
+          - PLUCK
+          - SUB
+          - SUPER
+          - CHIP
+          - DRONE
+          - ORGAN
+          - BELL
+          - STRING
+          - RES
+          - KIT8
+          - KIT9
+          - FMPERC
+          - WAVE
+          - VECTOR
+          - GRAIN
+          - PAD
+          - BEAT
+          - HYPER
+          - MORPH
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clone JUCE 8.0.4 (shared)
+      - name: Cache JUCE
+        id: juce-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/juce
+          key: juce-8.0.4-windows
+
+      - name: Clone JUCE 8.0.4
+        if: steps.juce-cache.outputs.cache-hit != 'true'
         run: git clone --depth 1 --branch 8.0.4 https://github.com/juce-framework/JUCE.git "${{ github.workspace }}\juce"
 
-      - name: Build all Windows VST3
+      - name: Configure
+        shell: pwsh
+        run: cmake -B "${{ matrix.module }}/build" -S "${{ matrix.module }}" -A x64 -DCMAKE_BUILD_TYPE=Release -DJUCE_PATH="${{ github.workspace }}\juce"
+
+      - name: Build VST3
+        shell: pwsh
+        run: cmake --build "${{ matrix.module }}/build" --config Release --target "${{ matrix.module }}_VST3"
+
+      - name: Package
         shell: pwsh
         run: |
-          $ErrorActionPreference = 'Continue'
-          $JUCE = "${{ github.workspace }}\juce"
-          $modules = "$env:MODULES".Split(" ") | Where-Object { $_ -ne "" }
-          New-Item -ItemType Directory -Force -Path dist, "dist\suite", stage | Out-Null
-          $ok = 0; $failed = @()
+          $M = "${{ matrix.module }}"
+          $vst3 = Get-ChildItem -Path "$M/build/${M}_artefacts/Release/VST3" -Filter *.vst3 -Directory -ErrorAction Stop | Select-Object -First 1
+          $stage = "stage\AUR $M"
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          Copy-Item -Recurse -Force $vst3.FullName "$stage\"
+          "AUR $M (Windows) - AUR Audio`nCopy 'AUR $M.vst3' to your VST3 folder:`n  C:\Program Files\Common Files\VST3\`nThen rescan plug-ins in your DAW." | Out-File -Encoding utf8 "$stage\INSTALL.txt"
+          Compress-Archive -Path $stage -DestinationPath "AUR-$M-Windows.zip" -Force
 
-          foreach ($M in $modules) {
-            Write-Host "::group::$M"
-            cmake -B "$M/build" -S "$M" -A x64 -DCMAKE_BUILD_TYPE=Release -DJUCE_PATH="$JUCE" *> "$M-cfg.log"
-            if ($LASTEXITCODE -ne 0) { Write-Host "configure FAIL"; $failed += $M; Write-Host "::endgroup::"; continue }
-
-            cmake --build "$M/build" --config Release --target "${M}_VST3" *> "$M-build.log"
-            if ($LASTEXITCODE -ne 0) { Write-Host "build FAIL"; Get-Content "$M-build.log" -Tail 30; $failed += $M; Write-Host "::endgroup::"; continue }
-
-            $vst3 = Get-ChildItem -Path "$M/build/${M}_artefacts/Release/VST3" -Filter *.vst3 -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
-            if (-not $vst3) { Write-Host "no vst3 artefact"; $failed += $M; Write-Host "::endgroup::"; continue }
-
-            $pluginStage = "stage\AUR $M"
-            New-Item -ItemType Directory -Force -Path $pluginStage | Out-Null
-            Copy-Item -Recurse -Force $vst3.FullName "$pluginStage\"
-            "AUR $M (Windows) - AUR Audio`nCopy 'AUR $M.vst3' to your VST3 folder:`n  C:\Program Files\Common Files\VST3\`nThen rescan plug-ins in your DAW." | Out-File -Encoding utf8 "$pluginStage\INSTALL.txt"
-            Compress-Archive -Path $pluginStage -DestinationPath "dist\AUR-$M-Windows.zip" -Force
-            Copy-Item -Recurse -Force $vst3.FullName "dist\suite\"
-            Remove-Item -Recurse -Force $pluginStage
-            $ok++; Write-Host "OK"
-            Write-Host "::endgroup::"
-          }
-
-          Compress-Archive -Path "dist\suite\*" -DestinationPath "dist\AUR-Windows-VST3-Suite.zip" -Force
-          Remove-Item -Recurse -Force "dist\suite"
-          Write-Host "Built $ok / $($modules.Count). Failed: $($failed -join ' ')"
-          Get-ChildItem dist
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: AUR-Windows-VST3
-          path: dist/*.zip
+          name: AUR-${{ matrix.module }}-Windows
+          path: AUR-${{ matrix.module }}-Windows.zip
+          retention-days: 7
 
-      - name: Attach to release ${{ env.RELEASE_TAG }}
-        shell: bash
+  collect:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Flatten + build suite zip
+        run: |
+          mkdir -p dist
+          find artifacts -name '*.zip' -exec cp {} dist/ \;
+          cd dist
+          mkdir -p suite-extract
+          for z in AUR-*-Windows.zip; do unzip -oq "$z" -d suite-extract; done
+          cd suite-extract && zip -rq ../AUR-Windows-VST3-Suite.zip . && cd ..
+          rm -rf suite-extract
+          echo "Collected $(ls AUR-*-Windows.zip | wc -l) per-plugin zips"
+          ls -la
+
+      - name: Attach everything to release ${{ env.RELEASE_TAG }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload "$RELEASE_TAG" dist/*.zip --clobber
+        run: gh release upload "$RELEASE_TAG" dist/*.zip --clobber
