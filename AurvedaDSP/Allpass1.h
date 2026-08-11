@@ -2,6 +2,10 @@
 
 #include <cmath>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 namespace aur
 {
 /** First-order allpass with a tunable break frequency (for phasers). */
