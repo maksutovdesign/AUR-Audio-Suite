@@ -72,6 +72,22 @@ footer b{color:var(--ink-mute)}
 .herobtn.ghost{background:transparent;color:var(--accent-br);border:1px solid var(--accent2)}
 .herobtn:hover{background:var(--accent-br);color:var(--ground)}
 .herobtn.ghost:hover{background:rgba(232,178,76,.12);color:var(--accent-br)}
+.donate .grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:26px}
+.dcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.dcard .dh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.dlogo{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--ground);flex:none}
+.dlogo.tbank{background:#ffdd2d;color:#111}
+.dlogo.btc{background:#f7931a}.dlogo.trx{background:#e33}.dlogo.eth{background:#627eea}.dlogo.mail{background:var(--teal)}
+.dh .dt{font-size:13px;letter-spacing:.04em;color:var(--ink)}
+.dlabel{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:4px}
+.dcopy{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--ground);border:1px solid var(--line2);
+  border-radius:8px;padding:9px 12px;color:var(--ink);cursor:pointer;font:inherit;transition:border-color .15s,background .15s}
+.dcopy:hover{border-color:var(--accent2)}
+.dcopy .dval{flex:1;font-family:"SF Mono",Menlo,monospace;font-size:12.5px;word-break:break-all;color:var(--accent-br)}
+.dcopy .dc{font-size:10px;letter-spacing:.08em;color:var(--ink-dim)}
+.dcopy.copied{border-color:var(--teal)}.dcopy.copied .dc{color:var(--teal-br)}
+.drecip{margin-top:10px;font-size:12.5px;color:var(--ink-mute)}
+.dnote{margin-top:22px;font-size:12px;color:var(--ink-dim)}
 @media(max-width:640px){.brand h1{font-size:40px}.tagline{font-size:18px}}
 </style>
 </head>
@@ -107,6 +123,7 @@ footer b{color:var(--ink-mute)}
   <a href="#fx-mod">Модуляция</a>
   <a href="#fx-restore">Реставрация</a>
   <a href="#fx-meter">Метрология</a>
+  <a href="#donate">Поддержать</a>
 </div></nav>
 
 <section id="why"><div class="wrap">
@@ -183,10 +200,50 @@ footer b{color:var(--ink-mute)}
     <div class="card"><span class="cat">meters</span><div class="name">SCOPE</div><p>Спектр, LUFS, корреляция — всё в одном окне.</p><img src="images/SCOPE.png" alt="" onerror="this.remove()"><div class="dl"><a class="dlbtn" href="downloads/AUR-SCOPE.zip" download>⤓ Скачать <span class="sz">VST3 · AU</span></a></div></div><div class="card"><span class="cat">vectorscope</span><div class="name">GONIO</div><p>Стерео-гониометр (вектороскоп).</p><img src="images/GONIO.png" alt="" onerror="this.remove()"><div class="dl"><a class="dlbtn" href="downloads/AUR-GONIO.zip" download>⤓ Скачать <span class="sz">VST3 · AU</span></a></div></div><div class="card"><span class="cat">tuner</span><div class="name">TUNER</div><p>Хроматический тюнер (автокорреляция).</p><img src="images/TUNER.png" alt="" onerror="this.remove()"><div class="dl"><a class="dlbtn" href="downloads/AUR-TUNER.zip" download>⤓ Скачать <span class="sz">VST3 · AU</span></a></div></div></div>
 </div></section>
 
+<section id="donate"><div class="wrap donate">
+  <h2>Поддержать автора донатом</h2>
+  <p class="h2sub">Если AUR оказался полезен и вы хотите поддержать развитие проекта — любая благодарность принимается с искренней признательностью. Нажмите на реквизиты, чтобы скопировать.</p>
+  <div class="grid2">
+    <div class="dcard">
+      <div class="dh"><span class="dlogo tbank">Т</span><span class="dt">Т-банк — по номеру телефона</span></div>
+      <div style="margin-top:10px"><span class="dlabel">Номер телефона</span><button class="dcopy" data-copy="+79536533934"><span class="dval">+7 953 653-39-34</span><span class="dc">Копировать</span></button></div>
+      <div class="drecip">Получатель: Екатерина М.</div>
+    </div>
+    <div class="dcard">
+      <div class="dh"><span class="dlogo btc">₿</span><span class="dt">Bitcoin</span></div>
+      <div style="margin-top:10px"><span class="dlabel">Адрес кошелька</span><button class="dcopy" data-copy="1Ad9cXdQfApRJU3H5Ecpd23397njzhHbqV"><span class="dval">1Ad9cXdQfApRJU3H5Ecpd23397njzhHbqV</span><span class="dc">Копировать</span></button></div>
+    </div>
+    <div class="dcard">
+      <div class="dh"><span class="dlogo trx">₮</span><span class="dt">USDT TRC20 (Tron)</span></div>
+      <div style="margin-top:10px"><span class="dlabel">Адрес кошелька</span><button class="dcopy" data-copy="TDdhyiFRV84VTPWA3yn7PUYLjNTsnaoEuw"><span class="dval">TDdhyiFRV84VTPWA3yn7PUYLjNTsnaoEuw</span><span class="dc">Копировать</span></button></div>
+    </div>
+    <div class="dcard">
+      <div class="dh"><span class="dlogo eth">◆</span><span class="dt">USDT ERC20 (Ethereum)</span></div>
+      <div style="margin-top:10px"><span class="dlabel">Адрес кошелька</span><button class="dcopy" data-copy="0x9c637cbe764f04871385f3e703ff102242fc74fc"><span class="dval">0x9c637cbe764f04871385f3e703ff102242fc74fc</span><span class="dc">Копировать</span></button></div>
+    </div>
+    <div class="dcard">
+      <div class="dh"><span class="dlogo mail">@</span><span class="dt">Связаться с автором</span></div>
+      <div style="margin-top:10px"><span class="dlabel">Электронная почта</span><button class="dcopy" data-copy="maksutovdesign@mail.ru"><span class="dval">maksutovdesign@mail.ru</span><span class="dc">Копировать</span></button></div>
+    </div>
+  </div>
+  <p class="dnote">Нажмите на реквизиты, чтобы скопировать в буфер обмена.</p>
+</div></section>
+
 <footer><div class="wrap">
   <p><b>AUR Audio Suite</b> — 31 эффект + 23 инструмента · AU + VST3 + Standalone · Universal (Apple Silicon + Intel) · Все модули проходят Apple auval.</p>
   <p style="margin-top:8px">Скриншоты: положите PNG в <span class="mono">images/&lt;ИМЯ_МОДУЛЯ&gt;.png</span> (например <span class="mono">images/HYPER.png</span>) — карточки подхватят их автоматически; без файла карточка остаётся текстовой.</p>
 </div></footer>
 
+<script>
+document.querySelectorAll('.dcopy').forEach(function(b){
+  b.addEventListener('click', function(){
+    var t=b.getAttribute('data-copy');
+    navigator.clipboard && navigator.clipboard.writeText(t);
+    var c=b.querySelector('.dc'), old=c.textContent;
+    b.classList.add('copied'); c.textContent='Скопировано ✓';
+    setTimeout(function(){ b.classList.remove('copied'); c.textContent=old; }, 1500);
+  });
+});
+</script>
 </body>
 </html>
