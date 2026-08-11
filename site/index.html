@@ -33,7 +33,10 @@ header{padding:72px 0 40px;background:
 .badge.gold{color:var(--accent-br);border-color:rgba(232,178,76,.4)}
 
 nav.toc{position:sticky;top:0;z-index:9;background:rgba(12,12,14,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-nav.toc .wrap{display:flex;gap:22px;overflow-x:auto;padding-top:13px;padding-bottom:13px}
+nav.toc .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:13px;padding-bottom:13px}
+.toc-links{display:flex;gap:22px;overflow-x:auto}
+.toc-donate{flex:none;color:var(--accent-br)!important;border:1px solid var(--accent2);border-radius:999px;padding:5px 14px}
+.toc-donate:hover{background:rgba(232,178,76,.12)}
 nav.toc a{color:var(--ink-mute);text-decoration:none;font-size:13px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
 nav.toc a:hover{color:var(--accent-br)}
 
@@ -118,15 +121,17 @@ footer b{color:var(--ink-mute)}
 </header>
 
 <nav class="toc"><div class="wrap">
-  <a href="#why">Философия</a>
-  <a href="#instruments">Инструменты</a>
-  <a href="#drums">Драм-машины</a>
-  <a href="#fx-dynamics">Динамика</a>
-  <a href="#fx-tone">Тембр и пространство</a>
-  <a href="#fx-mod">Модуляция</a>
-  <a href="#fx-restore">Реставрация</a>
-  <a href="#fx-meter">Метрология</a>
-  <a href="#donate">Поддержать</a>
+  <div class="toc-links">
+    <a href="#why">Философия</a>
+    <a href="#instruments">Инструменты</a>
+    <a href="#drums">Драм-машины</a>
+    <a href="#fx-dynamics">Динамика</a>
+    <a href="#fx-tone">Тембр и пространство</a>
+    <a href="#fx-mod">Модуляция</a>
+    <a href="#fx-restore">Реставрация</a>
+    <a href="#fx-meter">Метрология</a>
+  </div>
+  <a href="#donate" class="toc-donate">Поддержать</a>
 </div></nav>
 
 <section id="why"><div class="wrap">
