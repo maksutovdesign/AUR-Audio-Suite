@@ -24,6 +24,8 @@ void AssistProcessor::prepareToPlay (double sampleRate, int)
     limiter.prepare (sampleRate, ch, 2.0);
     loudnessIn.prepare (sampleRate, ch);
     loudnessOut.prepare (sampleRate, ch);
+    trim.prepare (sampleRate, ch);
+    trimming.store (false);
 
     for (auto& f : lpDet) f.setLowpass  (sampleRate, 300.0, 0.707);
     for (auto& f : hpDet) f.setHighpass (sampleRate, 3000.0, 0.707);
@@ -58,7 +60,7 @@ void AssistProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Midi
     // ---- Analysis pass (measures the INPUT before processing) ----
     if (analyzing.load())
     {
-        if (analyzeRemaining.load() == analyzeLen) { lpAcc = hpAcc = 0.0; accN = 0; loudnessIn.reset(); }
+        if (analyzeRemaining.load() == analyzeLen) { lpAcc = hpAcc = 0.0; accN = 0; loudnessIn.reset(); trim.stop(); trimming.store (false); }
 
         for (int s = 0; s < n; ++s)
         {
@@ -86,6 +88,8 @@ void AssistProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Midi
             computedTiltDb.store (t);
 
             analyzing.store (false);
+            trim.start (inLufs); // then listen to the output and correct the gain (see LoudnessTrim)
+            trimming.store (true);
         }
         else analyzeRemaining.store (rem);
     }
@@ -130,6 +134,15 @@ void AssistProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Midi
 
     limiter.setParameters (pCeil->load(), 100.0f, 0.0f);
     limiter.process (buffer.getArrayOfWritePointers(), totalOut, n);
+
+    // After the analysis: the stages after the gain take some loudness off; listen and correct.
+    if (trim.isActive())
+    {
+        float g = computedGainDb.load();
+        if (trim.push (buffer.getArrayOfReadPointers(), (size_t) totalOut, n, Params::targetLufs ((int) *pTarget), intensity, g))
+            computedGainDb.store (g);
+        trimming.store (trim.isActive());
+    }
 
     // Output loudness + spectrum.
     for (int s = 0; s < n; ++s)

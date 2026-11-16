@@ -8,6 +8,7 @@
 #include "Compressor.h"
 #include "TruePeakLimiter.h"
 #include "LoudnessMeter.h"
+#include "LoudnessTrim.h"
 #include "AnalyzerFifo.h"
 
 /**
@@ -50,6 +51,7 @@ public:
 
     // ---- Assistant control / readouts (UI thread) ----
     void startAnalysis() { analyzeRemaining.store (analyzeLen); analyzing.store (true); }
+    bool  isTrimming()       const { return trimming.load(); } // listening to its own output after the analysis
     bool  isAnalyzing()      const { return analyzing.load(); }
     float getComputedGainDb() const { return computedGainDb.load(); }
     float getComputedTiltDb() const { return computedTiltDb.load(); }
@@ -74,6 +76,8 @@ private:
 
     // Analysis.
     aur::LoudnessMeter loudnessIn, loudnessOut;
+    aur::LoudnessTrim trim;                         // corrects the gain from the output
+    std::atomic<bool> trimming { false };
     std::array<aur::Biquad, 1> lpDet, hpDet;        // mono detectors
     aur::AnalyzerFifo<4096> analyzer;
 
