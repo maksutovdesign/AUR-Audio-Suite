@@ -48,8 +48,19 @@ public:
     }
 
     /** The same analysis on any window of samples. */
-    static float detect (const float* w, int n, double sampleRate)
+    static float detect (const float* window, int n, double sampleRate)
     {
+        // An offset (DC) keeps the curve from going negative, and nothing would be found: take
+        // the window's mean out first.
+        std::array<float, kWin> centred;
+        n = std::min (n, kWin);
+        double mean = 0.0;
+        for (int i = 0; i < n; ++i)
+            mean += window[i];
+        mean /= std::max (1, n);
+        for (int i = 0; i < n; ++i)
+            centred[(size_t) i] = (float) (window[i] - mean);
+        const float* w = centred.data();
         double energy = 0.0;
         for (int i = 0; i < n; ++i)
             energy += (double) w[i] * w[i];

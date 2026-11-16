@@ -34,6 +34,14 @@ struct KarplusString
             lp += brightness * (n - lp);                    // brighter burst = more high end
             buf[(size_t) i] = (brightness * n + (1.0f - brightness) * lp) * velocity;
         }
+        // A short burst is not centred on zero, and the loop's averaging passes what is left
+        // (DC): it rang on as an offset, up to 70 % of a quiet note. Take the burst's mean out.
+        float mean = 0.0f;
+        for (int i = 0; i < size; ++i)
+            mean += buf[(size_t) i];
+        mean /= (float) size;
+        for (int i = 0; i < size; ++i)
+            buf[(size_t) i] -= mean;
         idx = 0; active = true; env = velocity; releaseMul = 1.0f;
     }
 

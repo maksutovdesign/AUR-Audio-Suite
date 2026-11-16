@@ -34,7 +34,7 @@ namespace Params
         {
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::ratio (i), 1 }, "Op" + String (i+1) + " Ratio",
                 NormalisableRange<float> (0.25f, 16.f, 0.01f, 0.5f), ratioDef[i],
-                AudioParameterFloatAttributes().withStringFromValueFunction ([](float v,int){ return String (v,2) + "×"; })));
+                AudioParameterFloatAttributes().withStringFromValueFunction ([](float v,int){ return String (v,2) + String::fromUTF8 ("×"); })));
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::level (i), 1 }, "Op" + String (i+1) + " Level",
                 NormalisableRange<float> (0.f, 1.f, 0.001f), lvlDef[i], AudioParameterFloatAttributes().withStringFromValueFunction (pct)));
             p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::atk (i), 1 }, "Op" + String (i+1) + " Attack",
@@ -48,7 +48,7 @@ namespace Params
         }
 
         p.push_back (std::make_unique<AudioParameterChoice> (ParameterID { ParamID::algo, 1 }, "Algorithm",
-            StringArray { "Chain", "Twin Stack", "3→Carrier", "Y-Stack", "Parallel", "Additive" }, 0));
+            StringArray { "Chain", "Twin Stack", String::fromUTF8 ("3→Carrier"), "Y-Stack", "Parallel", "Additive" }, 0));
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::feedback, 1 }, "Feedback",
             NormalisableRange<float> (0.f, 1.f, 0.001f), 0.f, AudioParameterFloatAttributes().withStringFromValueFunction (pct)));
         p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamID::glide, 1 }, "Glide",

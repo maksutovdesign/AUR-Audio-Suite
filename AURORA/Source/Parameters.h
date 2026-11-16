@@ -60,7 +60,7 @@ namespace Params
         auto add  = [&p](std::unique_ptr<RangedAudioParameter> x){ p.push_back (std::move (x)); };
         auto flt  = [](const char* id, const char* nm, float lo, float hi, float def, float skew, std::function<String(float,int)> fmt)
         {
-            return std::make_unique<AudioParameterFloat> (ParameterID { id, 1 }, nm,
+            return std::make_unique<AudioParameterFloat> (ParameterID { id, 1 }, String::fromUTF8 (nm), // (names with an arrow: UTF-8)
                 NormalisableRange<float> (lo, hi, 0.0001f, skew), def,
                 AudioParameterFloatAttributes().withStringFromValueFunction (fmt));
         };

@@ -29,7 +29,7 @@ namespace Params
         auto sec = [](float v,int){ return v < 1.f ? String ((int)(v*1000)) + " ms" : String (v,2) + " s"; };
         auto pct = [](float v,int){ return String ((int)(v*100)) + " %"; };
         auto f = [&](const char* id, const char* nm, float lo, float hi, float def, float sk, std::function<String(float,int)> fmt)
-        { p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { id, 1 }, nm, NormalisableRange<float>(lo,hi,0.0001f,sk), def, AudioParameterFloatAttributes().withStringFromValueFunction (fmt))); };
+        { p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { id, 1 }, String::fromUTF8 (nm), NormalisableRange<float>(lo,hi,0.0001f,sk), def, AudioParameterFloatAttributes().withStringFromValueFunction (fmt))); };
 
         f (ParamID::morph1, "Osc1 Morph", 0.f, 1.f, 0.66f, 1.f, pct);
         f (ParamID::morph2, "Osc2 Morph", 0.f, 1.f, 0.33f, 1.f, pct);
