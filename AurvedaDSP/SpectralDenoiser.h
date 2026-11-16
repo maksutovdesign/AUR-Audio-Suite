@@ -64,6 +64,11 @@ public:
     }
     bool isLearning() const { return learning.load(); }
 
+    /** The learned noise profile, one magnitude per bin, so a host can save it with a session.
+        Read it when !isLearning(); set it before processing starts (not while the audio runs). */
+    const std::array<float, kBins>& getProfile() const { return profile; }
+    void setProfile (const std::array<float, kBins>& learned) { profile = learned; }
+
     void process (float* const* data, int numChIn, int numSamples)
     {
         const size_t nc = ((size_t) numChIn < channels) ? (size_t) numChIn : channels;
